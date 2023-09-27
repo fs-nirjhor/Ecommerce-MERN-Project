@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const createError = require("http-errors");
 const { xss } = require('express-xss-sanitizer');
 const { rateLimit } = require('express-rate-limit');
+const userRouter = require("./routers/userRouter");
 
 
 // initialization
@@ -64,6 +65,10 @@ app.get("/api/profile", isLoggedIn, (req, res) => {
   res.status(200).send({id, message: "Welcome to your profile"});
 });
 
+// using router for api/users
+app.use("/api/users", userRouter);
+
+// errors must handle just before app.listen
 // client error handler
 app.use((req, res, next) => {
   next(createError(404, "Route not found"));
