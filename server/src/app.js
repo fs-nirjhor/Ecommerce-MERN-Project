@@ -5,6 +5,7 @@ const createError = require("http-errors");
 const { xss } = require('express-xss-sanitizer');
 const { rateLimit } = require('express-rate-limit');
 const userRouter = require("./routers/userRouter");
+const seedRouter = require("./routers/seedRouter");
 
 
 // initialization
@@ -65,8 +66,9 @@ app.get("/api/profile", isLoggedIn, (req, res) => {
   res.status(200).send({id, message: "Welcome to your profile"});
 });
 
-// using router for api/users
+// using router 
 app.use("/api/users", userRouter);
+app.use("/api/seed", seedRouter);
 
 // errors must handle just before app.listen
 // client error handler
