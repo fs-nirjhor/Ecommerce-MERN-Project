@@ -1,7 +1,7 @@
 const users = require("../models/userModel")
 // const createError = require("http-errors");
 
-const userController = (req, res, next) => {
+const getUsers = (req, res, next) => {
   try {
     return res.status(200).json(users)
   } catch (error) {
@@ -9,4 +9,4 @@ const userController = (req, res, next) => {
   }
 }
 
-module.exports = userController
+module.exports = getUsers

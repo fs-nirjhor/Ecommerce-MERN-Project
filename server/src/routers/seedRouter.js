@@ -1,16 +1,9 @@
 // seed api for "/api/seed"
 
 const express = require('express');
-const seedController = require('../controllers/seedController');
+const seedUser = require('../controllers/seedController');
 const seedRouter = express.Router();
 
-seedRouter.get('/users', seedController)
+seedRouter.get('/users', seedUser)
 
 module.exports = seedRouter;
-
-
-
-
- 
-
-

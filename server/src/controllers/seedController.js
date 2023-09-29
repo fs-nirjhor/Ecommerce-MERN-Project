@@ -1,7 +1,7 @@
 const data = require("../data");
 const User = require("../models/userModel");
 
-const seedController = async(req, res, next) => {
+const seedUser = async(req, res, next) => {
  try {
     // deleting all existing users
     await User.deleteMany({});
@@ -14,4 +14,4 @@ const seedController = async(req, res, next) => {
  }
 }
 
-module.exports = seedController;
+module.exports = seedUser;
