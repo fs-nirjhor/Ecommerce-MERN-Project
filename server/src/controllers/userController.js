@@ -2,6 +2,7 @@
 const createError = require("http-errors");
 
 const User = require("../models/userModel");
+const { successResponse } = require("./responseController");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -29,8 +30,12 @@ const getUsers = async (req, res, next) => {
       previous: page - 1 > 0 ? page - 1 : null,
       next: page + 1 <= Math.ceil(count / limit) ? page + 1 : null,
     };
-    if(!users.length) throw createError(404, 'No users found');
-     res.status(200).json({users, pagination});
+    if (!users.length) throw createError(404, "No users found"); // this error will be catch()
+    return successResponse(res, {
+      statusCode: 200,
+      message: `${users.length} / ${count} users returned`,
+      payload: { users, pagination },
+    });
   } catch (error) {
     next(error); // next refers to error handler.
   }

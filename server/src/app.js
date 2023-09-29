@@ -6,6 +6,7 @@ const { xss } = require('express-xss-sanitizer');
 const { rateLimit } = require('express-rate-limit');
 const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
+const { errorResponse } = require("./controllers/responseController");
 
 
 // initialization
@@ -78,9 +79,8 @@ app.use((req, res, next) => {
 
 // server error handler - handle all error on server
 app.use((err, req, res, next) => {
-  return res
-    .status(err.status || 500)
-    .json({ success: false, code: err.status, message: err.message });
+    const {status, message} = err;
+    return errorResponse(res, {statusCode: status, message});
 });
 
 // exporting app
