@@ -1,6 +1,6 @@
-//const users = require("../models/userModel")
-const createError = require("http-errors");
+// manage getting all user data
 
+const createError = require("http-errors");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 
