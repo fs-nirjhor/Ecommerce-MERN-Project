@@ -1,7 +1,7 @@
 // importing
 const express = require("express");
 const morgan = require("morgan");
-const createError = require("http-errors");
+const createHttpError = require("http-errors");
 const { xss } = require('express-xss-sanitizer');
 const { rateLimit } = require('express-rate-limit');
 const userRouter = require("./routers/userRouter");
@@ -74,7 +74,7 @@ app.use("/api/seed", seedRouter);
 // errors must handle just before app.listen
 // client error handler
 app.use((req, res, next) => {
-  next(createError(404, "Route not found"));
+  next(createHttpError(404, "Route not found"));
 });
 
 // server error handler - handle all error on server
