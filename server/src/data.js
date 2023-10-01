@@ -14,28 +14,32 @@ const data = {
       email: "michael.johnson@example.com",
       password: "5678",
       address: "Chittagong",
-      phone: "01823456789"
+      phone: "01823456789",
+      isAdmin: true
     },
     {
       name: "Jennifer Davis",
       email: "jennifer.davis@example.com",
       password: "4321",
       address: "Sylhet",
-      phone: "01934567890"
+      phone: "01934567890",
+      isAdmin: true
     },
     {
       name: "David Smith",
       email: "david.smith@example.com",
       password: "9876",
       address: "Khulna",
-      phone: "01645678901"
+      phone: "01645678901",
+      isBanned: true
     },
     {
       name: "Linda Wilson",
       email: "linda.wilson@example.com",
       password: "6543",
       address: "Rajshahi",
-      phone: "01556789012"
+      phone: "01556789012",
+      isBanned: true
     },
     {
       name: "William Taylor",

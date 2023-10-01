@@ -5,7 +5,10 @@
     express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcrypt, 
 
 ## Routes 
-   ### Get: 
+   ### POST: 
     ~/api/seed/users -> seed initial fake data for users (admin)
+   ### Get: 
     ~/api/users -> get all users and get users by name, email or phone with limit and pagination (admin)
-    ~/api/users/:id -> get user by mongodb id 
+    ~/api/users/:id -> get user by id 
+   ### DELETE: 
+    ~/api/users/:id -> delete user by id 
