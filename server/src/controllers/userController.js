@@ -2,10 +2,10 @@
 
 const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
-const fs = require("fs");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findItemById } = require("../services/findItem");
+const deleteImage = require("../helper/deleteImage");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -47,7 +47,7 @@ const getUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const options = { password: 0 }; 
+    const options = { password: 0 };
     const user = await findItemById(User, id, options);
     return successResponse(res, {
       statusCode: 200,
@@ -55,36 +55,32 @@ const getUser = async (req, res, next) => {
       payload: { user },
     });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 
 const deleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const options = { password: 0 }; 
-    const user = await findItemById(User, id, options);
-    const userImagePath = user.image;
+    const deletedUser = await User.findOneAndDelete({
+      _id: id,
+      isAdmin: false,
+    });
+    if (!deletedUser) throw createHttpError(400, "User cannot be deleted");
     // removing saved image of deleted user
-    fs.access(userImagePath, (error) => {
-      if (error) {
-        console.error('User image does not exist');
-      } else {
-      fs.unlink(userImagePath, (error) => {
-        if (error) throw error;
-        console.log('User image deleted successfully')
-      }) 
-    }
-    })
-    const deletedUser = await User.findOneAndDelete({_id: id, isAdmin: false});
-    if (!deletedUser) throw createHttpError(400, 'User cannot be deleted')
+    deleteImage(deletedUser.image);
     return successResponse(res, {
       statusCode: 200,
       message: "User deleted successfully",
       payload: { deletedUser },
     });
   } catch (error) {
-    next(error); 
+    // handle mongoose error
+    if (error instanceof mongoose.Error) {
+      next(createHttpError(400, `Invalid user id.`));
+      return;
+    }
+    next(error);
   }
 };
 
