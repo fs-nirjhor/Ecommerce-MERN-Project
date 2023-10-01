@@ -83,5 +83,26 @@ const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+const processRegister = async (req, res, next) => {
+  try {
+    const {name, email, password, address, phone} = req.body;
+    const newUser = {name, email, password, address, phone}
+    const isRegistered = await User.exists({email : email})
+    // conflict error
+    if (isRegistered) throw createHttpError(409, "Email already be registered. Please login.");
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User registered successfully",
+      payload: { newUser },
+    });
+  } catch (error) {
+    // handle mongoose error
+    if (error instanceof mongoose.Error) {
+      next(createHttpError(400, `Invalid user id.`));
+      return;
+    }
+    next(error);
+  }
+};
 
-module.exports = { getUsers, getUser, deleteUser };
+module.exports = { getUsers, getUser, deleteUser, processRegister };
