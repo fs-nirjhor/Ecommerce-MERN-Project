@@ -6,6 +6,8 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findItemById } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
+const { createJWT } = require("../helper/manageJWT");
+const { secretJwtKey } = require("../secret");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -86,21 +88,17 @@ const deleteUser = async (req, res, next) => {
 const processRegister = async (req, res, next) => {
   try {
     const {name, email, password, address, phone} = req.body;
-    const newUser = {name, email, password, address, phone}
+    const newUser = req.body;
     const isRegistered = await User.exists({email : email})
     // conflict error
     if (isRegistered) throw createHttpError(409, "Email already be registered. Please login.");
+    createJWT(newUser, secretJwtKey, '5m')
     return successResponse(res, {
       statusCode: 200,
       message: "User registered successfully",
       payload: { newUser },
     });
   } catch (error) {
-    // handle mongoose error
-    if (error instanceof mongoose.Error) {
-      next(createHttpError(400, `Invalid user id.`));
-      return;
-    }
     next(error);
   }
 };
