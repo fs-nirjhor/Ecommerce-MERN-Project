@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const createJWT = (payload, secretJwtKey, expiresIn = "10m") => {
+  // check validity of payload
   if (typeof payload !== "object" || Object.keys(payload).length === 0) {
     throw new Error("JWT payload must be non-empty object");
   }
@@ -11,7 +12,8 @@ const createJWT = (payload, secretJwtKey, expiresIn = "10m") => {
     const token = jwt.sign(payload, secretJwtKey, { expiresIn: expiresIn });
     return token;
   } catch (error) {
-    throw new Error(error.message);
+    console.log('Failed to sign JWT', error.message);
+    throw error;
   }
 };
 

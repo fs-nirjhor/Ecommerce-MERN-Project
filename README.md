@@ -2,7 +2,7 @@
 
 ## Packages 
    ### Backend: 
-    express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcrypt, 
+    express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcrypt, jsonwebtoken
 
 ## Routes 
    ### Get: 
@@ -10,6 +10,6 @@
     ~/api/users/:id -> get user by id 
    ### POST: 
     ~/api/seed/users -> seed initial fake data for users (admin)
-    ~/api/users/process-register -> process user data for registration 
+    ~/api/users/process-register -> create JWT to verify user email 
    ### DELETE: 
     ~/api/users/:id -> delete user by id 

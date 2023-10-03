@@ -87,16 +87,16 @@ const deleteUser = async (req, res, next) => {
 };
 const processRegister = async (req, res, next) => {
   try {
-    const {name, email, password, address, phone} = req.body;
     const newUser = req.body;
+    const {name, email, password, address, phone} = newUser;
     const isRegistered = await User.exists({email : email})
     // conflict error
     if (isRegistered) throw createHttpError(409, "Email already be registered. Please login.");
-    createJWT(newUser, secretJwtKey, '5m')
+    const token = createJWT(newUser, secretJwtKey, '5m')
     return successResponse(res, {
       statusCode: 200,
-      message: "User registered successfully",
-      payload: { newUser },
+      message: "JWT created for user successfully",
+      payload: { token },
     });
   } catch (error) {
     next(error);
