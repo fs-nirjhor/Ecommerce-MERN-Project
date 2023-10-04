@@ -89,8 +89,9 @@ const deleteUser = async (req, res, next) => {
 };
 const processRegister = async (req, res, next) => {
   try {
-    const newUser = req.body;
-    const { name, email, password, address, phone } = newUser;
+    const image = req.file.path;
+    const newUser = {...req.body, image};
+    const {name, email} = newUser;
     // check if email already registered
     const isRegistered = await User.exists({ email: email });
     // conflict error
@@ -111,6 +112,7 @@ const processRegister = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
+      // todo: remove token from payload
       payload: { token, mailInfo },
     });
   } catch (error) {
@@ -127,7 +129,7 @@ const verifyUser = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `User verified successfully`,
-      payload: { decoded, user },
+      payload: { user },
     });
   } catch (error) {
     // check if user is already registered

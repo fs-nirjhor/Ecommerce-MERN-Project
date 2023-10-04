@@ -11,6 +11,7 @@ const secretJwtKey = process.env.SECRET_JWT_KEY || "abcd1234@#$%^&*";
 const smtpUser = process.env.SMTP_USER || "";
 const smtpPassword = process.env.SMTP_PASSWORD || "";
 const clientUrl = process.env.CLIENT_URL || "";
+const userImagePath = process.env.USER_IMAGE_PATH || "public/images/users";
 
 module.exports = {
   serverPort,
@@ -20,4 +21,5 @@ module.exports = {
   smtpUser,
   smtpPassword,
   clientUrl,
+  userImagePath,
 };
