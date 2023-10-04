@@ -11,6 +11,7 @@
     ~/api/users/:id -> get user by id 
    ### POST: 
     ~/api/seed/users -> seed initial fake data for users (admin)
-    ~/api/users/process-register -> create JWT to verify user email 
+    ~/api/users/process-register ->  send verification mail with JWT link 
+    ~/api/users/verify -> verify JWT token and registered user
    ### DELETE: 
     ~/api/users/:id -> delete user by id 
