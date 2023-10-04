@@ -6,8 +6,10 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findItemById } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
-const { createJWT } = require("../helper/manageJWT");
-const { secretJwtKey } = require("../secret");
+const { createJwt } = require("../helper/manageJWT");
+const { secretJwtKey, clientUrl } = require("../secret");
+const jwt = require("jsonwebtoken");
+const sendMail = require("../helper/useNodemailer");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -88,19 +90,53 @@ const deleteUser = async (req, res, next) => {
 const processRegister = async (req, res, next) => {
   try {
     const newUser = req.body;
-    const {name, email, password, address, phone} = newUser;
-    const isRegistered = await User.exists({email : email})
+    const { name, email, password, address, phone } = newUser;
+    // check if email already registered
+    const isRegistered = await User.exists({ email: email });
     // conflict error
-    if (isRegistered) throw createHttpError(409, "Email already be registered. Please login.");
-    const token = createJWT(newUser, secretJwtKey, '5m')
+    if (isRegistered)
+      throw createHttpError(409, "Email already be registered. Please login.");
+    // create jwt token
+    const token = createJwt(newUser, secretJwtKey, "10m");
+    // send verification email
+    const mailData = {
+      email,
+      subject: "Account Verification Email",
+      html: `
+      <h2>Hello ${name}</h2>
+      <p>Click here to <a href='${clientUrl}/api/users/api/users/activate/${token}' target="_blank" rel="noopener noreferrer">activate your email</a></p>
+      `,
+    };
+    const mailInfo = await sendMail(mailData);
     return successResponse(res, {
       statusCode: 200,
-      message: "JWT created for user successfully",
-      payload: { token },
+      message: `Verification mail sent to ${email}`,
+      payload: { token, mailInfo },
     });
   } catch (error) {
     next(error);
   }
 };
+const verifyUser = async (req, res, next) => {
+  try {
+    const token = req.body.token;
+    // verify jwt token
+    var decoded = jwt.verify(token, secretJwtKey);
+    // register new user to database
+    const user = await User.create(decoded);
+    return successResponse(res, {
+      statusCode: 200,
+      message: `User verified successfully`,
+      payload: { decoded, user },
+    });
+  } catch (error) {
+    // check if user is already registered
+    if (error.name === "MongoServerError") {
+      next(createHttpError(400, "Email already registered. Please login."));
+      return;
+    }
+    next(error);
+  }
+};
 
-module.exports = { getUsers, getUser, deleteUser, processRegister };
+module.exports = { getUsers, getUser, deleteUser, processRegister, verifyUser };

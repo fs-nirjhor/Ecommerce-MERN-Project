@@ -1,7 +1,7 @@
 // router for 'api/users'
 
 const express = require('express')
-const { getUsers, getUser, deleteUser, processRegister } = require('../controllers/userController')
+const { getUsers, getUser, deleteUser, processRegister, verifyUser } = require('../controllers/userController')
 
 
 const userRouter = express.Router()
@@ -13,6 +13,8 @@ userRouter.get('/:id', getUser)
 userRouter.delete('/:id', deleteUser)
 // api/users/process-register
 userRouter.post('/process-register', processRegister)
+// api/users/verify
+userRouter.post('/verify', verifyUser)
 
 // api/users/test
 userRouter.get('/test', (req, res) => {

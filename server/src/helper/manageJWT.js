@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const createJWT = (payload, secretJwtKey, expiresIn = "10m") => {
+const createJwt = (payload, secretJwtKey, expiresIn = "10m") => {
   // check validity of payload
   if (typeof payload !== "object" || Object.keys(payload).length === 0) {
     throw new Error("JWT payload must be non-empty object");
@@ -17,4 +17,4 @@ const createJWT = (payload, secretJwtKey, expiresIn = "10m") => {
   }
 };
 
-module.exports = { createJWT };
+module.exports = { createJwt };
