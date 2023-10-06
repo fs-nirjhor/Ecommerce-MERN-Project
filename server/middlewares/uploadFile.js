@@ -1,6 +1,5 @@
 const multer = require("multer");
 const path = require("path");
-const createHttpError = require("http-errors");
 const {
   maxImageSize,
   allowedImageExtensions,
@@ -19,21 +18,21 @@ const storage = multer.diskStorage({
   },
 });
 
-const fileFilter = function (req, file, cb) {
+const fileFilter = (req, file, cb) => {
   const extension = path.extname(file.originalname);
   if (!allowedImageExtensions.includes(extension)) {
-    return cb(
-      new Error(`Try allowed file types (${allowedImageExtensions})`),
-      false
+    const error = new Error(
+      `Try allowed file types (${allowedImageExtensions})`
     );
+    return cb(error, false);
   }
   return cb(null, true);
 };
 
 const upload = multer({
   storage,
-  fileFilter,
   limits: { fileSize: maxImageSize },
+  fileFilter,
 });
 
 module.exports = upload;

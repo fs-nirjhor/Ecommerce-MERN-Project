@@ -16,7 +16,7 @@ const sendMail = async (mailData) => {
   try {
     const { email, subject, html } = mailData;
     const mailOptions = {
-      from: "fsecommerce@example.com", // sender address
+      from: smtpUser, // sender address
       to: email, // list of receivers
       subject: subject, // Subject line
       html: html, // html body

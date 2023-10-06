@@ -56,9 +56,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/test", (req, res) => {
-  res.status(200).send({
-    message: "Server is working fine",
-  });
+  const text = req.query.text;
+  res.status(200).send(`Server is working fine. ${text}`);
 });
 
 // protected route with isLoggedIn middleware

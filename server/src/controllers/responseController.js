@@ -4,7 +4,6 @@ const errorResponse = (
   res,
   { statusCode = 500, message = "Internal server error" }
 ) => {
-    console.log(statusCode, message)
   res.status(statusCode).json({ success: false, message });
 };
 

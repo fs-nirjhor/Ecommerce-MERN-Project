@@ -89,7 +89,7 @@ const deleteUser = async (req, res, next) => {
 };
 const processRegister = async (req, res, next) => {
   try {
-    const image = req.file.path;
+    const image = req.file;
     const newUser = {...req.body, image};
     const {name, email} = newUser;
     // check if email already registered
@@ -108,7 +108,9 @@ const processRegister = async (req, res, next) => {
       <p>Click here to <a href='${clientUrl}/api/users/api/users/activate/${token}' target="_blank" rel="noopener noreferrer">activate your email</a></p>
       `,
     };
-    const mailInfo = await sendMail(mailData);
+    // todo: remove comment from mailInfo
+      const mailInfo = {}
+   // const mailInfo = await sendMail(mailData);
     return successResponse(res, {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
