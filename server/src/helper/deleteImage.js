@@ -4,9 +4,10 @@ const deleteImage = async (imagePath) => {
     try {
         await fs.access(imagePath);
         await fs.unlink(imagePath);
-        console.log('User image deleted successfully')
+        console.log('Image deleted successfully')
     } catch (error) {
-        console.error('User image does not exist');
+        console.error('Image does not exist');
+        throw error;
     }
 }
 

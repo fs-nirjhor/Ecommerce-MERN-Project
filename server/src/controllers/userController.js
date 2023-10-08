@@ -10,6 +10,7 @@ const { createJwt } = require("../helper/manageJWT");
 const { secretJwtKey, clientUrl } = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
+const { defaultUserImagePath } = require("../config/config");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -72,7 +73,9 @@ const deleteUser = async (req, res, next) => {
     });
     if (!deletedUser) throw createHttpError(400, "User cannot be deleted");
     // removing saved image of deleted user
-    deleteImage(deletedUser.image);
+    if (deletedUser.image !== defaultUserImagePath) {
+      deleteImage(deletedUser.image);
+    }
     return successResponse(res, {
       statusCode: 200,
       message: "User deleted successfully",
@@ -89,7 +92,8 @@ const deleteUser = async (req, res, next) => {
 };
 const processRegister = async (req, res, next) => {
   try {
-    const image = req.file;
+    const image = req.file ? req.file.path : defaultUserImagePath;
+
     const newUser = {...req.body, image};
     const {name, email} = newUser;
     // check if email already registered
@@ -108,14 +112,14 @@ const processRegister = async (req, res, next) => {
       <p>Click here to <a href='${clientUrl}/api/users/api/users/activate/${token}' target="_blank" rel="noopener noreferrer">activate your email</a></p>
       `,
     };
-    // todo: remove comment from mailInfo
+    // todo: comment out mailInfo for testing purposes. remove it later
       const mailInfo = {}
    // const mailInfo = await sendMail(mailData);
     return successResponse(res, {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
-      // todo: remove token from payload
-      payload: { token, mailInfo },
+      // todo: remove token from payload. its security issue. here is for testing.
+      payload: { token, mailInfo, newUser },
     });
   } catch (error) {
     next(error);

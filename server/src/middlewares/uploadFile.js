@@ -4,7 +4,7 @@ const {
   maxImageSize,
   allowedImageExtensions,
   userImagePath,
-} = require("../src/config/config");
+} = require("../config/config");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const extension = path.extname(file.originalname);
+  const extension = path.extname(file.originalname).substring(1);
   if (!allowedImageExtensions.includes(extension)) {
     const error = new Error(
       `Try allowed file types (${allowedImageExtensions})`
