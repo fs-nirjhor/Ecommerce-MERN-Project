@@ -2,7 +2,7 @@
 
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
-const { defaultUserImagePath } = require("../config/config");
+const { defaultUserImagePath, defaultUserImageBuffer } = require("../config/config");
 
 const userSchema = new Schema(
   {
@@ -40,10 +40,16 @@ const userSchema = new Schema(
       ],
       set: (v) => bcrypt.hashSync(v, 10),
     },
+    // TODO: image can be stored as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one model should be choose here.
     image: {
+      type: Buffer,
+      contentType: String,
+      default: defaultUserImageBuffer,
+    },
+    /* image: {
       type: String,
       default: defaultUserImagePath,
-    },
+    }, */
     address: {
       type: String,
       required: [true, "Address is required"],

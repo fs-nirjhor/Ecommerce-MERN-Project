@@ -10,7 +10,7 @@ const { createJwt } = require("../helper/manageJWT");
 const { secretJwtKey, clientUrl } = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
-const { defaultUserImagePath } = require("../config/config");
+const { defaultUserImagePath, defaultUserImageBuffer } = require("../config/config");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -92,8 +92,9 @@ const deleteUser = async (req, res, next) => {
 };
 const processRegister = async (req, res, next) => {
   try {
-    const image = req.file ? req.file.path : defaultUserImagePath;
-
+    // TODO: Here is double setup for upload image as String (path) or Buffer. Any one image should be choose here.
+    //const image = req.file ? req.file.path : defaultUserImagePath;
+    const image = req.file ? req.file.buffer.toString("base64") : defaultUserImageBuffer;
     const newUser = {...req.body, image};
     const {name, email} = newUser;
     // check if email already registered
@@ -119,7 +120,7 @@ const processRegister = async (req, res, next) => {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
       // todo: remove token from payload. its security issue. here is for testing.
-      payload: { token, mailInfo, newUser },
+      payload: { /* mailInfo, */ token, newUser },
     });
   } catch (error) {
     next(error);

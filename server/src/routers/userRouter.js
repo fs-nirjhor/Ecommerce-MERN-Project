@@ -10,9 +10,9 @@ const {
 } = require("../controllers/userController");
 const { validateUserRegistration } = require("../validators/userValidator");
 const runValidations = require("../validators");
-// TODO: There is buffer  and string methods to uploading file. Any of them could be imported and used.
-//const upload = require("../middlewares/uploadBufferFile");  //buffer 
- const upload = require("../middlewares/uploadFile");  //string 
+// TODO: image can be uploaded as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one import should be choose here.
+const upload = require("../middlewares/uploadBufferFile");  //buffer 
+// const upload = require("../middlewares/uploadFile");  //string 
 
 const userRouter = express.Router();
 

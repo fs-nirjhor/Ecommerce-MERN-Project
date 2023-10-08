@@ -4,20 +4,14 @@ const { maxImageSize, allowedImageExtensions } = require("../config/config");
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  if (!fileFilter.memeType.startWith("image/")) {
+  if (!file.mimetype.startsWith("image/")) {
     const error = new Error("Only image is allowed");
     return cb(error, false);
   }
-  const extension = file.memeType.replace("image/", "");
+  const extension = file.mimetype.replace("image/", "");
   if (!allowedImageExtensions.includes(extension)) {
     const error = new Error(
       `Try allowed file types (${allowedImageExtensions})`
-    );
-    return cb(error, false);
-  }
-  if (file.size > maxImageSize) {
-    const error = new Error(
-      `File size can\'t exceed ${maxImageSize / 1024 / 1024} MB`
     );
     return cb(error, false);
   }
@@ -27,6 +21,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
+  limits: { fileSize: maxImageSize },
 });
 
 module.exports = upload;

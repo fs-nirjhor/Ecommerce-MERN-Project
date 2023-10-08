@@ -1,5 +1,10 @@
 const { body } = require("express-validator");
-const { defaultUserImagePath } = require("../config/config");
+const {
+  defaultUserImagePath,
+  defaultUserImageBuffer,
+  maxImageSize,
+  allowedImageExtensions,
+} = require("../config/config");
 
 const validateUserRegistration = [
   body("name")
@@ -23,23 +28,48 @@ const validateUserRegistration = [
     .withMessage(
       "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
     ),
-  body("image")
-  .isString()
-  .withMessage("Image must be a string.")
-  .optional()
-  .default(defaultUserImagePath),
   body("address")
-  .trim()
-  .notEmpty()
-  .withMessage("Please enter your address.")
-  .isLength({ min: 3 })
-  .withMessage("Address should have at least 3 characters."),
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your address.")
+    .isLength({ min: 3 })
+    .withMessage("Address should have at least 3 characters."),
   body("phone")
-  .trim()
-  .notEmpty()
-  .withMessage("Please enter your phone number.")
-  .isLength({ min: 5 })
-  .withMessage("Phone should have at least 5 characters."),
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your phone number.")
+    .isLength({ min: 5 })
+    .withMessage("Phone should have at least 5 characters."),
+  body("image")
+  .custom((value, { req }) => {
+    const image = req.file;
+    if (!image) {
+       console.log("Image not selected");
+       return true;
+    }
+    if (!image.mimetype.startsWith("image/")) {
+      throw new Error("Only image is allowed");
+    }
+
+    const allowedMimetypePattern = new RegExp(
+      `^image\/(${allowedImageExtensions.join("|")})$`,
+      "i"
+    );
+    if (!allowedMimetypePattern.test(image.mimetype)) {
+      throw new Error(
+        `Invalid image format. Only ${allowedImageExtensions
+          .join(", ")
+          .toUpperCase()} are allowed.`
+      );
+    }
+
+    if (image.size > maxImageSize) {
+      throw new Error(
+        `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
+      );
+    }
+    return true;
+  }),
 ];
 
 module.exports = { validateUserRegistration };
