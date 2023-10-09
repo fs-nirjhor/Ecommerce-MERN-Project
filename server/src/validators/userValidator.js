@@ -42,6 +42,7 @@ const validateUserRegistration = [
     .withMessage("Phone should have at least 5 characters."),
   body("image")
   .custom((value, { req }) => {
+    //! this image filter will not make any effect because the case's are already handled by multer filter.
     const image = req.file;
     if (!image) {
        console.log("Image not selected");
