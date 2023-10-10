@@ -15,3 +15,5 @@
     ~/api/users/verify -> verify JWT token and registered user
    ### DELETE: 
     ~/api/users/:id -> delete user by id 
+   ### UPDATE (put): 
+    ~/api/users/:id -> update user by id 
