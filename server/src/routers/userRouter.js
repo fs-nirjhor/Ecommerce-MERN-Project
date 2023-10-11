@@ -7,6 +7,7 @@ const {
   deleteUser,
   processRegister,
   verifyUser,
+  updateUser,
 } = require("../controllers/userController");
 const { validateUserRegistration } = require("../validators/userValidator");
 const runValidations = require("../validators");
@@ -21,6 +22,7 @@ userRouter.get("/", getUsers);
 // api/users/:id
 userRouter.get("/:id", getUser);
 userRouter.delete("/:id", deleteUser);
+userRouter.put("/:id", upload.single("image"), updateUser);
 // api/users/process-register
 userRouter.post(
   "/process-register",

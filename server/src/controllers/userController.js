@@ -1,7 +1,6 @@
 // manage getting all user data
 
 const createHttpError = require("http-errors");
-const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findItemById } = require("../services/findItem");
@@ -10,7 +9,12 @@ const { createJwt } = require("../helper/manageJWT");
 const { secretJwtKey, clientUrl } = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
-const { defaultUserImagePath, defaultUserImageBuffer } = require("../config/config");
+const {
+  defaultUserImagePath,
+  defaultUserImageBuffer,
+  maxImageSize,
+} = require("../config/config");
+const { request } = require("express");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -67,6 +71,7 @@ const getUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
+    await findItemById(User, id, { password: 0 });
     const deletedUser = await User.findOneAndDelete({
       _id: id,
       isAdmin: false,
@@ -82,11 +87,6 @@ const deleteUser = async (req, res, next) => {
       payload: { deletedUser },
     });
   } catch (error) {
-    // handle mongoose error
-    if (error instanceof mongoose.Error) {
-      next(createHttpError(400, `Invalid user id.`));
-      return;
-    }
     next(error);
   }
 };
@@ -94,9 +94,11 @@ const processRegister = async (req, res, next) => {
   try {
     // TODO: Here is double setup for upload image as String (path) or Buffer. Any one image should be choose here.
     //const image = req.file ? req.file.path : defaultUserImagePath;
-    const image = req.file ? req.file.buffer.toString("base64") : defaultUserImageBuffer;
-    const newUser = {...req.body, image};
-    const {name, email} = newUser;
+    const image = req.file
+      ? req.file.buffer.toString("base64")
+      : defaultUserImageBuffer;
+    const newUser = { ...req.body, image };
+    const { name, email } = newUser;
     // check if email already registered
     const isRegistered = await User.exists({ email: email });
     // conflict error
@@ -114,13 +116,14 @@ const processRegister = async (req, res, next) => {
       `,
     };
     // todo: comment out mailInfo for testing purposes. remove it later
-      const mailInfo = {}
-   // const mailInfo = await sendMail(mailData);
+    //const mailInfo = {};
+    const mailInfo = await sendMail(mailData);
+    if (!mailInfo) throw new Error("Couldn't send mail");
     return successResponse(res, {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
       // todo: remove token from payload. its security issue. here is for testing.
-      payload: { /* mailInfo, */ token, newUser },
+      payload: { token, /* mailInfo, */ newUser },
     });
   } catch (error) {
     next(error);
@@ -147,5 +150,53 @@ const verifyUser = async (req, res, next) => {
     next(error);
   }
 };
+const updateUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const user = await findItemById(User, id, { password: 0 });
+    const updates = {};
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const updateKeys = ["name", "password", "phone", "address"];
+    for (let key in data) {
+      if (!updateKeys.includes(key)) {
+        throw createHttpError(400,`${key} can\'t be updated`);
+      } 
+      if (data[key] === user[key]) {
+        throw createHttpError(409,`${key} is already updated`)
+      }
+      updates[key] = data[key];
+    }
+    const image = req.file;
+    if (image) {
+      if (image.size > maxImageSize) {
+        throw new Error(
+          `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
+        );
+      }
+      updates.image = image.buffer.toString("base64");
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updates,
+      updateOptions
+    ).select("-password");
+    if (!updatedUser) throw new Error("User can't be updated");
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User updated successfully",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports = { getUsers, getUser, deleteUser, processRegister, verifyUser };
+module.exports = {
+  getUsers,
+  getUser,
+  deleteUser,
+  processRegister,
+  verifyUser,
+  updateUser,
+};
