@@ -153,11 +153,11 @@ const verifyUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const data = req.body;
     const user = await findItemById(User, id, { password: 0 });
     const updates = {};
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const updateKeys = ["name", "password", "phone", "address"];
+    const data = req.body;
     for (let key in data) {
       if (!updateKeys.includes(key)) {
         throw createHttpError(400,`${key} can\'t be updated`);
