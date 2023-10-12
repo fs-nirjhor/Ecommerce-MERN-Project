@@ -1,4 +1,4 @@
-// importing
+// import
 const express = require("express");
 const morgan = require("morgan");
 const createHttpError = require("http-errors");
@@ -7,9 +7,10 @@ const { rateLimit } = require('express-rate-limit');
 const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
 const { errorResponse } = require("./controllers/responseController");
+const authRouter = require("./routers/authRouter");
 
 
-// initialization
+// initialize
 const app = express();
 const limiter = rateLimit({
 	windowMs: 10 * 60 * 1000, // 10 minutes
@@ -46,7 +47,7 @@ app.use(morgan("dev")); // morgan used for getting some information on console w
 // built-in middleware
 app.use(express.json()); // express.json parses incoming requests with JSON payloads
 app.use(express.urlencoded({ extended: true })); // express.urlencoded parses incoming requests with URL-encoded payloads (form data)
-app.use(xss()); // Express 4.x middleware which sanitizes user input data (in req.body, req.query, req.headers and req.params) to prevent Cross Site Scripting (XSS) attack. its a alternative for 'xss-clean' which is deprecated.
+app.use(xss()); // Express 4.x middleware which sanitizes user input data (in req.body, req.query, req.headers and req.params) to prevent Cross Site Scripting (XSS) attack. its a alternative for 'xss-clean' which is deprecated. it also can be handled by express-validator
 app.use(limiter) //Use to limit repeated requests to public APIs and/or endpoints such as password reset.
 
 
@@ -67,8 +68,9 @@ app.get("/api/profile", isLoggedIn, (req, res) => {
 });
 
 // using router 
-app.use("/api/users", userRouter);
 app.use("/api/seed", seedRouter);
+app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
 
 // errors must handle just before app.listen
 // client error handler

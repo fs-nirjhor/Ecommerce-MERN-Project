@@ -1,4 +1,4 @@
-// router for 'api/users'
+//* router for 'api/users'
 
 const express = require("express");
 const {
@@ -33,7 +33,6 @@ userRouter.post(
 );
 // api/users/activate
 userRouter.post("/activate", activateUserAccount);
-
 // api/users/test
 userRouter.get("/test", (req, res) => {
   res.send("testing router");
