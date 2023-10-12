@@ -129,11 +129,11 @@ const processRegister = async (req, res, next) => {
     next(error);
   }
 };
-const verifyUser = async (req, res, next) => {
+const activateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     // verify jwt token
-    var decoded = jwt.verify(token, secretJwtKey);
+    var decoded = jwt.activate(token, secretJwtKey);
     // register new user to database
     const user = await User.create(decoded);
     return successResponse(res, {
@@ -160,10 +160,10 @@ const updateUser = async (req, res, next) => {
     const data = req.body;
     for (let key in data) {
       if (!updateKeys.includes(key)) {
-        throw createHttpError(400,`${key} can\'t be updated`);
-      } 
+        throw createHttpError(400, `${key} can\'t be updated`);
+      }
       if (data[key] === user[key]) {
-        throw createHttpError(409,`${key} is already updated`)
+        throw createHttpError(409, `${key} is already updated`);
       }
       updates[key] = data[key];
     }
@@ -197,6 +197,6 @@ module.exports = {
   getUser,
   deleteUser,
   processRegister,
-  verifyUser,
+  activateUserAccount,
   updateUser,
 };
