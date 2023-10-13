@@ -36,13 +36,13 @@ const handleLogin = async (req, res, next) => {
     res.cookie("access_token", accessToken, {
       maxAge: 15 * 60 * 1000, // 15 minute
       httpOnly: true,
-      secure: true,
+      //secure: true, // not include in headers
       sameSite: "none", // call from multiple addresses
     });
     return successResponse(res, {
       statusCode: 200,
       message: "Logged in successfully",
-      payload: { user, accessToken },
+      payload: { user },
     });
   } catch (error) {
     next(error);
