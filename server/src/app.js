@@ -1,25 +1,24 @@
 // import
 const express = require("express");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 const createHttpError = require("http-errors");
-const { xss } = require('express-xss-sanitizer');
-const { rateLimit } = require('express-rate-limit');
+const { xss } = require("express-xss-sanitizer");
+const { rateLimit } = require("express-rate-limit");
 const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
 const { errorResponse } = require("./controllers/responseController");
 const authRouter = require("./routers/authRouter");
 
-
 // initialize
 const app = express();
 const limiter = rateLimit({
-	windowMs: 10 * 60 * 1000, // 10 minutes
-	limit: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes)
-	standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-	message: 'Too many requests. \n Please try again later.', 
-})
-
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes)
+  standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: "Too many requests. \n Please try again later.",
+});
 
 // middleware
 
@@ -48,8 +47,8 @@ app.use(morgan("dev")); // morgan used for getting some information on console w
 app.use(express.json()); // express.json parses incoming requests with JSON payloads
 app.use(express.urlencoded({ extended: true })); // express.urlencoded parses incoming requests with URL-encoded payloads (form data)
 app.use(xss()); // Express 4.x middleware which sanitizes user input data (in req.body, req.query, req.headers and req.params) to prevent Cross Site Scripting (XSS) attack. its a alternative for 'xss-clean' which is deprecated. it also can be handled by express-validator
-app.use(limiter) //Use to limit repeated requests to public APIs and/or endpoints such as password reset.
-
+app.use(limiter); //Use to limit repeated requests to public APIs and/or endpoints such as password reset.
+app.use(cookieParser()); //handle cookie
 
 // Routes
 app.get("/", (req, res) => {
@@ -63,11 +62,11 @@ app.get("/test", (req, res) => {
 
 // protected route with isLoggedIn middleware
 app.get("/api/profile", isLoggedIn, (req, res) => {
-    const id = req.body.id;
-  res.status(200).send({id, message: "Welcome to your profile"});
+  const id = req.body.id;
+  res.status(200).send({ id, message: "Welcome to your profile" });
 });
 
-// using router 
+// using router
 app.use("/api/seed", seedRouter);
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
@@ -80,8 +79,8 @@ app.use((req, res, next) => {
 
 // server error handler - handle all error on server
 app.use((err, req, res, next) => {
-    const {status, message} = err;
-    return errorResponse(res, {statusCode: status, message});
+  const { status, message } = err;
+  return errorResponse(res, { statusCode: status, message });
 });
 
 // exporting app
