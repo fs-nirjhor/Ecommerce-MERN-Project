@@ -6,7 +6,7 @@ const { successResponse } = require("./responseController");
 const { findItemById } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
 const { createJwt } = require("../helper/manageJWT");
-const { secretJwtKey, clientUrl } = require("../secret");
+const { jwtActivationKey, clientUrl } = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const {
@@ -105,7 +105,7 @@ const processRegister = async (req, res, next) => {
     if (isRegistered)
       throw createHttpError(409, "Email already be registered. Please login.");
     // create jwt token
-    const token = createJwt(newUser, secretJwtKey, "10m");
+    const token = createJwt(newUser, jwtActivationKey, "10m");
     // send verification email
     const mailData = {
       email,
@@ -133,7 +133,7 @@ const activateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     // verify jwt token
-    var decoded = jwt.activate(token, secretJwtKey);
+    var decoded = jwt.activate(token, jwtActivationKey);
     // register new user to database
     const user = await User.create(decoded);
     return successResponse(res, {

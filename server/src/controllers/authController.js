@@ -25,7 +25,9 @@ const handleLogin = async (req, res, next) => {
 
     //? is user banned
     if (user.isBanned) {throw createHttpError(403, "This account is banned");}
-    
+
+    // create access token
+    const accessToken = createJwt({email}, )
     return successResponse(res, {
       statusCode: 200,
       message: "Logged in successfully",
