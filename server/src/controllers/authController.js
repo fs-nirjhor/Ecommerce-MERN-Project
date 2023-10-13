@@ -16,7 +16,7 @@ const handleLogin = async (req, res, next) => {
     //? is password matched
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        throw createHttpError(403, "Your password is wrong")
+        throw createHttpError(403, "Wrong password")
     }
     //? is user banned
     if (user.isBanned) {throw createHttpError(403, "This account is banned");}
