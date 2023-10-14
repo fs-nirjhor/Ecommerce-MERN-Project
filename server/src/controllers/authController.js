@@ -48,5 +48,17 @@ const handleLogin = async (req, res, next) => {
     next(error);
   }
 };
+const handleLogout = async (req, res, next) => {
+  try {
+    // clear access cookie
+    res.clearCookie('access_token');
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports = { handleLogin };
+module.exports = { handleLogin, handleLogout };
