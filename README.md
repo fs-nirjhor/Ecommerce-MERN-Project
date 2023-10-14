@@ -18,6 +18,7 @@
     ~/api/seed/users -> seed initial fake data for users (admin)
     ~/api/users/process-register ->  send verification mail with JWT link
     ~/api/users/activate -> verify JWT token and registered user
+    ~/api/auth/login -> user login
 
 ### DELETE:
 
