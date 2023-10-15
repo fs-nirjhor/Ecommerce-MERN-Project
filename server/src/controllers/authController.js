@@ -50,6 +50,11 @@ const handleLogin = async (req, res, next) => {
 };
 const handleLogout = async (req, res, next) => {
   try {
+    console.log(req.cookies.access_token);
+    // check access cookie
+    if (!req.cookies.access_token) {
+      throw createHttpError(401, 'User already logged out')
+    }
     // clear access cookie
     res.clearCookie('access_token');
     return successResponse(res, {
