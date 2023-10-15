@@ -30,7 +30,7 @@ const handleLogin = async (req, res, next) => {
     }
 
     // create access token
-    const accessToken = createJwt({ email }, jwtAccessKey, "15m");
+    const accessToken = createJwt({ _id: user._id }, jwtAccessKey, "15m");
 
     // set cookie
     res.cookie("access_token", accessToken, {
