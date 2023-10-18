@@ -19,7 +19,7 @@ const { isLoggedIn } = require("../middlewares/auth");
 const userRouter = express.Router();
 
 // api/users
-userRouter.get("/", getUsers);
+userRouter.get("/", isLoggedIn, getUsers);
 // api/users/:id
 userRouter.get("/:id", isLoggedIn, getUserById);
 userRouter.delete("/:id", isLoggedIn, deleteUser);
