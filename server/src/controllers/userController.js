@@ -14,7 +14,6 @@ const {
   defaultUserImageBuffer,
   maxImageSize,
 } = require("../config/config");
-const { request } = require("express");
 
 const getUsers = async (req, res, next) => {
   try {
