@@ -6,10 +6,7 @@ const isLoggedIn = async (req, res, next) => {
   try {
     const token = req.cookies.access_token;
     if (!token) {
-      throw createHttpError(
-        "401",
-        "You are not logged in."
-      );
+      throw createHttpError("401", "User is not logged in.");
     }
     const decoded = await jwt.verify(token, jwtAccessKey);
     if (!decoded) {
@@ -25,7 +22,7 @@ const isLoggedOut = async (req, res, next) => {
   try {
     const token = req.cookies.access_token;
     if (token) {
-      throw createHttpError("401", "You are not logged out.");
+      throw createHttpError("401", "User is already logged in.");
     }
     next();
   } catch (error) {
