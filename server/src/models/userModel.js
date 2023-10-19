@@ -19,16 +19,16 @@ const userSchema = new Schema(
       trim: true,
       unique: true,
       lowercase: true,
-      /* validation: {
-      validator: function (v) {
-        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+      validate: {
+        validator: function (v) {
+          return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+        },
+        message: "Invalid email address",
       },
-      message: "Invalid email address",
-    }, */
-      match: [
+      /* match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please fill a valid email address",
-      ],
+      ], */
     },
     password: {
       type: String,
