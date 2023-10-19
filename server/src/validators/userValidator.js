@@ -73,4 +73,22 @@ const validateUserRegistration = [
   }),
 ];
 
-module.exports = { validateUserRegistration };
+const validateUserLogin = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your email address.")
+    .isEmail()
+    .withMessage("Please enter a valid email address.")
+    .toLowerCase(),
+  body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your password.")
+    .isStrongPassword()
+    .withMessage(
+      "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
+    ),
+];
+
+module.exports = { validateUserRegistration, validateUserLogin };
