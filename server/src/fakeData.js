@@ -3,17 +3,17 @@
 const fakeData = {
   users: [
     {
-      name: "Admin",
-      email: "admin@example.com",
-      password: "Admin$1234",
+      name: "Mr. Adman",
+      email: "adman@example.com",
+      password: "Adman$1234",
       address: "Dhaka",
       phone: "01712345678",
       isAdmin: true,
     },
     {
-      name: "Banned",
-      email: "banned@example.com",
-      password: "Banned$1234",
+      name: "Mr. Bandon",
+      email: "bandon@example.com",
+      password: "Bandon$1234",
       address: "New York",
       phone: "1234567890",
       isBanned: true,
