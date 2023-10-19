@@ -28,3 +28,5 @@
 ### UPDATE (put):
 
     ~/api/users/:id -> update user by id
+    ~/api/users/banned/:id -> banned user by id (admin)
+    ~/api/users/unbanned/:id -> unbanned user by id (admin)
