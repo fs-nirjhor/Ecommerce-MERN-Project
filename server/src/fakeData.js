@@ -1,6 +1,6 @@
 // random user data
 
-const data = {
+const fakeData = {
   users: [
     {
       name: "Admin",
@@ -147,4 +147,4 @@ const data = {
   ],
 };
 
-module.exports = data;
+module.exports = fakeData;
