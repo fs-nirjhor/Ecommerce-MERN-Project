@@ -2,7 +2,7 @@
 
 const express = require("express");
 const {
-  getUsers,
+  getAllUsers,
   getUserById,
   deleteUser,
   processRegister,
@@ -13,13 +13,13 @@ const { validateUserRegistration } = require("../validators/userValidator");
 const runValidations = require("../validators");
 // TODO: image can be uploaded as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one import should be choose here.
 const upload = require("../middlewares/uploadBufferFile"); //buffer
-const { isLoggedIn, isLoggedOut } = require("../middlewares/auth");
+const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 // const upload = require("../middlewares/uploadFile");  //string
 
 const userRouter = express.Router();
 
 // api/users
-userRouter.get("/", isLoggedIn, getUsers);
+userRouter.get("/", isLoggedIn, isAdmin, getAllUsers);
 // api/users/:id
 userRouter.get("/:id", isLoggedIn, getUserById);
 userRouter.delete("/:id", isLoggedIn, deleteUser);

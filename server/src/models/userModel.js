@@ -2,7 +2,7 @@
 
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
-const { defaultUserImagePath, defaultUserImageBuffer } = require("../config/config");
+const { defaultUserImagePath } = require("../config/config");
 
 const userSchema = new Schema(
   {
@@ -44,7 +44,6 @@ const userSchema = new Schema(
     image: {
       type: Buffer,
       contentType: String,
-      default: defaultUserImageBuffer,
     },
     /* image: {
       type: String,

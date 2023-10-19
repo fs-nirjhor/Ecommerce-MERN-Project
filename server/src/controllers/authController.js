@@ -28,9 +28,8 @@ const handleLogin = async (req, res, next) => {
     if (user.isBanned) {
       throw createHttpError(403, "This account is banned");
     }
-
     // create access token
-    const accessToken = createJwt({ _id: user._id }, jwtAccessKey, "15m");
+    const accessToken = await createJwt({ user }, jwtAccessKey, "15m");
 
     // set cookie
     res.cookie("access_token", accessToken, {
@@ -45,17 +44,17 @@ const handleLogin = async (req, res, next) => {
       payload: { user },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 const handleLogout = async (req, res, next) => {
   try {
     // check access cookie
     if (!req.cookies.access_token) {
-      throw createHttpError(401, 'User already logged out')
+      throw createHttpError(401, "User already logged out");
     }
     // clear access cookie
-    res.clearCookie('access_token');
+    res.clearCookie("access_token");
     return successResponse(res, {
       statusCode: 200,
       message: "Logged out successfully",

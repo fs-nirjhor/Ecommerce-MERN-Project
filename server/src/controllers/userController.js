@@ -15,7 +15,7 @@ const {
   maxImageSize,
 } = require("../config/config");
 
-const getUsers = async (req, res, next) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const search = req.query.search || "";
     const limit = Number(req.query.limit) || 5;
@@ -132,7 +132,7 @@ const activateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     // verify jwt token
-    var decoded = jwt.activate(token, jwtActivationKey);
+    var decoded = jwt.verify(token, jwtActivationKey);
     // register new user to database
     const user = await User.create(decoded);
     return successResponse(res, {
@@ -192,7 +192,7 @@ const updateUser = async (req, res, next) => {
 };
 
 module.exports = {
-  getUsers,
+  getAllUsers,
   getUserById,
   deleteUser,
   processRegister,
