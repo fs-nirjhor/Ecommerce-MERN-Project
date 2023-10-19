@@ -23,7 +23,6 @@ const findOneItem = async (Model, data, options = {}) => {
       throw new Error("Please provide data as object to find one item");
     }
     const item = await Model.findOne( data , options);
-    //console.log(item, data)
     if (!item) {
       throw createHttpError(404, `No ${Model.modelName} found with this ${Object.keys(data)}.`);
     }
