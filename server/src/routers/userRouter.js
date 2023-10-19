@@ -8,6 +8,8 @@ const {
   processRegister,
   activateUserAccount,
   updateUser,
+  bannedUser,
+  unbannedUser,
 } = require("../controllers/userController");
 const { validateUserRegistration } = require("../validators/userValidator");
 const runValidations = require("../validators");
@@ -35,6 +37,10 @@ userRouter.post(
 );
 // api/users/activate
 userRouter.post("/activate", isLoggedOut, activateUserAccount);
+// api/users/banned/:id
+userRouter.put("/banned/:id", isLoggedIn, isAdmin, bannedUser)
+// api/users/unbanned/:id
+userRouter.put("/unbanned/:id", isLoggedIn, isAdmin, unbannedUser)
 // api/users/test
 userRouter.get("/test", (req, res) => {
   res.send("testing router");

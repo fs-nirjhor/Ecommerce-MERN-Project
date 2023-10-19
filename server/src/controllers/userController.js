@@ -190,6 +190,50 @@ const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+const bannedUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = await findItemById(User, id, { password: 0 });
+    if (user.isBanned) throw createHttpError(409, `${user.name} is already banned`);
+    const updates = {isBanned: true};
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const bannedUser = await User.findByIdAndUpdate(
+      id,
+      updates,
+      updateOptions
+    ).select("-password");
+    if (!bannedUser) throw new Error(`${user.name} can't be banned`);
+    return successResponse(res, {
+      statusCode: 200,
+      message: `${user.name} is banned successfully`,
+      payload: { bannedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const unbannedUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = await findItemById(User, id, { password: 0 });
+    if (!user.isBanned) throw createHttpError(409, `${user.name} is not banned`);
+    const updates = {isBanned: false};
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const unbannedUser = await User.findByIdAndUpdate(
+      id,
+      updates,
+      updateOptions
+    ).select("-password");
+    if (!bannedUser) throw new Error(`${user.name} can't be unbanned`);
+    return successResponse(res, {
+      statusCode: 200,
+      message: `${user.name} is unbanned successfully`,
+      payload: { unbannedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -198,4 +242,6 @@ module.exports = {
   processRegister,
   activateUserAccount,
   updateUser,
+  bannedUser,
+  unbannedUser,
 };
