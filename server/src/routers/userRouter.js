@@ -10,6 +10,7 @@ const {
   updateUser,
   bannedUser,
   unbannedUser,
+  updatePassword,
 } = require("../controllers/userController");
 const { validateUserRegistration } = require("../validators/userValidator");
 const runValidations = require("../validators");
@@ -41,6 +42,8 @@ userRouter.post("/activate", isLoggedOut, activateUserAccount);
 userRouter.put("/banned/:id", isLoggedIn, isAdmin, bannedUser)
 // api/users/unbanned/:id
 userRouter.put("/unbanned/:id", isLoggedIn, isAdmin, unbannedUser)
+// api/users/update-password/:id
+userRouter.put("/update-password/:id", isLoggedIn, updatePassword);
 // api/users/test
 userRouter.get("/test", (req, res) => {
   res.send("testing router");

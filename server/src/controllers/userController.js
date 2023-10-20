@@ -1,6 +1,7 @@
 // manage getting all user data
 
 const createHttpError = require("http-errors");
+const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findItemById } = require("../services/findItem");
@@ -194,8 +195,9 @@ const bannedUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await findItemById(User, id, { password: 0 });
-    if (user.isBanned) throw createHttpError(409, `${user.name} is already banned`);
-    const updates = {isBanned: true};
+    if (user.isBanned)
+      throw createHttpError(409, `${user.name} is already banned`);
+    const updates = { isBanned: true };
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const bannedUser = await User.findByIdAndUpdate(
       id,
@@ -216,8 +218,9 @@ const unbannedUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await findItemById(User, id, { password: 0 });
-    if (!user.isBanned) throw createHttpError(409, `${user.name} is not banned`);
-    const updates = {isBanned: false};
+    if (!user.isBanned)
+      throw createHttpError(409, `${user.name} is not banned`);
+    const updates = { isBanned: false };
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const unbannedUser = await User.findByIdAndUpdate(
       id,
@@ -234,6 +237,33 @@ const unbannedUser = async (req, res, next) => {
     next(error);
   }
 };
+const updatePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const id = req.params.id;
+    const user = await findItemById(User, id);
+    //? is password matched
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw createHttpError(403, "Incorrect current password");
+    }
+    const updates = { $set: { password: newPassword } };
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updates,
+      updateOptions
+    ).select("-password");
+    if (!bannedUser) throw new Error("password can't be updated");
+    return successResponse(res, {
+      statusCode: 200,
+      message: "password is updated successfully",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -244,4 +274,5 @@ module.exports = {
   updateUser,
   bannedUser,
   unbannedUser,
+  updatePassword,
 };
