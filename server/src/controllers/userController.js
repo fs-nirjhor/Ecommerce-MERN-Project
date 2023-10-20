@@ -247,6 +247,9 @@ const updatePassword = async (req, res, next) => {
     if (!isMatch) {
       throw createHttpError(403, "Incorrect current password");
     }
+    if (newPassword === currentPassword) { 
+      throw createHttpError(403, "Password already in use");
+     } 
     const updates = { $set: { password: newPassword } };
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const updatedUser = await User.findByIdAndUpdate(
@@ -254,7 +257,7 @@ const updatePassword = async (req, res, next) => {
       updates,
       updateOptions
     ).select("-password");
-    if (!bannedUser) throw new Error("password can't be updated");
+    if (!updatedUser) throw new Error("Password can't be updated");
     return successResponse(res, {
       statusCode: 200,
       message: "password is updated successfully",
