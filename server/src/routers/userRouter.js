@@ -12,7 +12,7 @@ const {
   unbannedUser,
   updatePassword,
 } = require("../controllers/userController");
-const { validateUserRegistration } = require("../validators/userValidator");
+const { validateUserRegistration, validateUpdatePassword } = require("../validators/userValidator");
 const runValidations = require("../validators");
 // TODO: image can be uploaded as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one import should be choose here.
 const upload = require("../middlewares/uploadBufferFile"); //buffer
@@ -43,7 +43,7 @@ userRouter.put("/banned/:id", isLoggedIn, isAdmin, bannedUser)
 // api/users/unbanned/:id
 userRouter.put("/unbanned/:id", isLoggedIn, isAdmin, unbannedUser)
 // api/users/update-password/:id
-userRouter.put("/update-password/:id", isLoggedIn, updatePassword);
+userRouter.put("/update-password/:id", isLoggedIn, validateUpdatePassword, runValidations, updatePassword);
 // api/users/test
 userRouter.get("/test", (req, res) => {
   res.send("testing router");

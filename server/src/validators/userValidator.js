@@ -5,6 +5,7 @@ const {
   maxImageSize,
   allowedImageExtensions,
 } = require("../config/config");
+const createHttpError = require("http-errors");
 
 const validateUserRegistration = [
   body("name")
@@ -90,5 +91,29 @@ const validateUserLogin = [
       "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
     ),
 ];
+const validateUpdatePassword = [
+  body("currentPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your current password.")
+    .isStrongPassword()
+    .withMessage(
+      "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
+    ),
+  body("newPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your new password.")
+    .isStrongPassword()
+    .withMessage(
+      "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
+    ),
+  body("confirmPassword").custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw createHttpError(400, "Please confirm your new password exactly.");
+    }
+    return true;
+  })
+];
 
-module.exports = { validateUserRegistration, validateUserLogin };
+module.exports = { validateUserRegistration, validateUserLogin, validateUpdatePassword };
