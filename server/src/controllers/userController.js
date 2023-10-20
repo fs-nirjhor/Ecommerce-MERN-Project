@@ -153,16 +153,16 @@ const activateUserAccount = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const user = await findItemById(User, id, { password: 0 });
+    const userById = await findItemById(User, id, { password: 0 });
     const updates = {};
     const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updateKeys = ["name", "password", "phone", "address"];
-    const data = req.body;
+    const updateKeys = ["name", "phone", "address"];
+    const { user, ...data } = req.body;
     for (let key in data) {
       if (!updateKeys.includes(key)) {
         throw createHttpError(400, `${key} can\'t be updated`);
       }
-      if (data[key] === user[key]) {
+      if (data[key] === userById[key]) {
         throw createHttpError(409, `${key} is already updated`);
       }
       updates[key] = data[key];
@@ -181,7 +181,9 @@ const updateUser = async (req, res, next) => {
       updates,
       updateOptions
     ).select("-password");
-    if (!updatedUser) throw new Error("User can't be updated");
+    if (!updatedUser) {
+      throw new Error("User can't be updated");
+    }
     return successResponse(res, {
       statusCode: 200,
       message: "User updated successfully",
@@ -247,9 +249,9 @@ const updatePassword = async (req, res, next) => {
     if (!isMatch) {
       throw createHttpError(403, "Incorrect current password");
     }
-    if (newPassword === currentPassword) { 
+    if (newPassword === currentPassword) {
       throw createHttpError(403, "Password already in use");
-     } 
+    }
     const updates = { $set: { password: newPassword } };
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const updatedUser = await User.findByIdAndUpdate(
