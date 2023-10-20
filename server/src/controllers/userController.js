@@ -157,6 +157,7 @@ const updateUser = async (req, res, next) => {
     const updates = {};
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const updateKeys = ["name", "phone", "address"];
+    // user is added from isLoggedIn middleware
     const { user, ...data } = req.body;
     for (let key in data) {
       if (!updateKeys.includes(key)) {
