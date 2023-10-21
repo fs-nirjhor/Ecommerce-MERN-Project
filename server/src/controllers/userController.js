@@ -7,7 +7,7 @@ const { successResponse } = require("./responseController");
 const { findItemById, findOneItem } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
 const { createJwt } = require("../helper/manageJWT");
-const { jwtActivationKey, clientUrl } = require("../secret");
+const { jwtActivationKey, clientUrl, jwtResetPasswordKey } = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const {
@@ -277,7 +277,7 @@ const forgetPassword = async (req, res, next) => {
     const user = await findOneItem(User, { email });
 
     // create jwt token
-    const token = createJwt({email}, jwtActivationKey, "10m");
+    const token = createJwt({email}, jwtResetPasswordKey, "10m");
     // send verification email
     const mailData = {
       email,
