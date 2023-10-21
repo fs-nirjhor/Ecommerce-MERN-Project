@@ -18,7 +18,7 @@
     ~/api/seed/users -> seed initial fake data for users (admin)
     ~/api/users/process-register -> send verification mail with JWT link
     ~/api/users/activate -> verify JWT token and registered user
-    ~/api/users/forgot-password -> user logout
+    ~/api/users/forgot-password -> send password reset email
     ~/api/auth/login -> user login with jwt access token
     ~/api/auth/logout -> user logout
    
@@ -32,3 +32,4 @@
     ~/api/users/ban/:id -> banned user by id (admin)
     ~/api/users/unban/:id -> unbanned user by id (admin)
     ~/api/users/update-password/:id -> update password by id
+    ~/api/users/reset-password -> reset password by token
