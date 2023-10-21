@@ -12,8 +12,9 @@ const {
   unbannedUser,
   updatePassword,
   forgetPassword,
+  resetPassword,
 } = require("../controllers/userController");
-const { validateUserRegistration, validateUpdatePassword, validateForgetPassword } = require("../validators/userValidator");
+const { validateUserRegistration, validateUpdatePassword, validateForgetPassword, validateResetPassword } = require("../validators/userValidator");
 const runValidations = require("../validators");
 // TODO: image can be uploaded as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one import should be choose here.
 const upload = require("../middlewares/uploadBufferFile"); //buffer
@@ -24,10 +25,6 @@ const userRouter = express.Router();
 
 // api/users
 userRouter.get("/", isLoggedIn, isAdmin, getAllUsers);
-// api/users/:id
-userRouter.get("/:id", isLoggedIn, getUserById);
-userRouter.delete("/:id", isLoggedIn, deleteUser);
-userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUser);
 // api/users/process-register
 userRouter.post(
   "/process-register",
@@ -41,14 +38,19 @@ userRouter.post(
 userRouter.post("/activate", isLoggedOut, activateUserAccount);
 // api/users/forget-password
 userRouter.post("/forget-password", validateForgetPassword, runValidations ,forgetPassword);
+// api/users/reset-password
+userRouter.put("/reset-password", validateResetPassword, runValidations, resetPassword);
+// api/users/update-password/:id
+userRouter.put("/update-password/:id", isLoggedIn, validateUpdatePassword, runValidations, updatePassword);
 // api/users/ban/:id
 userRouter.put("/ban/:id", isLoggedIn, isAdmin, bannedUser)
 // api/users/unban/:id
 userRouter.put("/unban/:id", isLoggedIn, isAdmin, unbannedUser)
-// api/users/update-password/:id
-userRouter.put("/update-password/:id", isLoggedIn, validateUpdatePassword, runValidations, updatePassword);
 
-
+// api/users/:id
+userRouter.get("/:id", isLoggedIn, getUserById);
+userRouter.delete("/:id", isLoggedIn, deleteUser);
+userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUser);
 // api/users/test
 userRouter.get("/test", (req, res) => {
   res.send("testing router");

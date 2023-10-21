@@ -7,7 +7,11 @@ const { successResponse } = require("./responseController");
 const { findItemById, findOneItem } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
 const { createJwt } = require("../helper/manageJWT");
-const { jwtActivationKey, clientUrl, jwtResetPasswordKey } = require("../secret");
+const {
+  jwtActivationKey,
+  clientUrl,
+  jwtResetPasswordKey,
+} = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const {
@@ -133,7 +137,10 @@ const activateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     // verify jwt token
-    var decoded = jwt.verify(token, jwtActivationKey);
+    const decoded = jwt.verify(token, jwtActivationKey);
+    if (!decoded) {
+      throw createHttpError(400, "JWT token is invalid or expired");
+    }
     // register new user to database
     const user = await User.create(decoded);
     return successResponse(res, {
@@ -277,7 +284,7 @@ const forgetPassword = async (req, res, next) => {
     const user = await findOneItem(User, { email });
 
     // create jwt token
-    const token = createJwt({email}, jwtResetPasswordKey, "10m");
+    const token = createJwt({ id: user._id }, jwtResetPasswordKey, "10m");
     // send verification email
     const mailData = {
       email,
@@ -301,6 +308,32 @@ const forgetPassword = async (req, res, next) => {
     next(error);
   }
 };
+const resetPassword = async (req, res, next) => {
+  try {
+    const {token, newPassword} = req.body;
+    // verify jwt token
+    const decoded = await jwt.verify(token, jwtResetPasswordKey);
+    if (!decoded) {
+      throw createHttpError(400, "JWT token is invalid or expired");
+    }
+    // reset password
+    const updates = { password: newPassword };
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const updatedUser = await User.findByIdAndUpdate(
+      decoded.id,
+      updates,
+      updateOptions
+    ).select("-password");
+    if (!updatedUser) throw new Error("Password can't be updated");
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Password reset successfully`,
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -313,4 +346,5 @@ module.exports = {
   unbannedUser,
   updatePassword,
   forgetPassword,
+  resetPassword,
 };

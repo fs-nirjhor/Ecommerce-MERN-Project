@@ -126,4 +126,15 @@ const validateForgetPassword = [
     .toLowerCase(),
 ];
 
-module.exports = { validateUserRegistration, validateUserLogin, validateUpdatePassword, validateForgetPassword };
+const validateResetPassword = [
+  body("newPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your new password.")
+    .isStrongPassword()
+    .withMessage(
+      "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
+    ),
+];
+
+module.exports = { validateUserRegistration, validateUserLogin, validateUpdatePassword, validateForgetPassword, validateResetPassword };
