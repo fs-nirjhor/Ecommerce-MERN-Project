@@ -4,7 +4,7 @@ const createHttpError = require("http-errors");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
-const { findItemById } = require("../services/findItem");
+const { findItemById, findOneItem } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
 const { createJwt } = require("../helper/manageJWT");
 const { jwtActivationKey, clientUrl } = require("../secret");
@@ -112,7 +112,7 @@ const processRegister = async (req, res, next) => {
       subject: "Account Verification Email",
       html: `
       <h2>Hello ${name}</h2>
-      <p>Click here to <a href='${clientUrl}/api/users/api/users/activate/${token}' target="_blank" rel="noopener noreferrer">activate your email</a></p>
+      <p>Click here to <a href='${clientUrl}/api/users/activate/${token}' target="_blank" rel="noopener noreferrer">activate your email</a></p>
       `,
     };
     // todo: comment out mailInfo for testing purposes. remove it later
@@ -270,6 +270,37 @@ const updatePassword = async (req, res, next) => {
     next(error);
   }
 };
+const forgetPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    //? is user exist
+    const user = await findOneItem(User, { email });
+
+    // create jwt token
+    const token = createJwt({email}, jwtActivationKey, "10m");
+    // send verification email
+    const mailData = {
+      email,
+      subject: "Reset Password Email",
+      html: `
+      <h2>Hello ${user.name}</h2>
+      <p>Click here to <a href='${clientUrl}/api/users/reset-password/${token}' target="_blank" rel="noopener noreferrer">Reset your password</a></p>
+      `,
+    };
+    // todo: comment out mailInfo for testing purposes. remove it later
+    //const mailInfo = {};
+    const mailInfo = await sendMail(mailData);
+    if (!mailInfo) throw new Error("Couldn't send mail");
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Reset password mail sent to ${email}`,
+      // todo: remove token from payload. its security issue. here is for testing.
+      payload: { token },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -281,4 +312,5 @@ module.exports = {
   bannedUser,
   unbannedUser,
   updatePassword,
+  forgetPassword,
 };

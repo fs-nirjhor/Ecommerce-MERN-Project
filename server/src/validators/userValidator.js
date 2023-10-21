@@ -116,4 +116,14 @@ const validateUpdatePassword = [
   })
 ];
 
-module.exports = { validateUserRegistration, validateUserLogin, validateUpdatePassword };
+const validateForgetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter your email address.")
+    .isEmail()
+    .withMessage("Please enter a valid email address.")
+    .toLowerCase(),
+];
+
+module.exports = { validateUserRegistration, validateUserLogin, validateUpdatePassword, validateForgetPassword };

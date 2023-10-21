@@ -19,9 +19,9 @@ const fakeData = {
       isBanned: true,
     },
     {
-      name: "Mary Johnson",
-      email: "mary.johnson@example.com",
-      password: "MJohnson$abcd",
+      name: "Mr. Usu",
+      email: "usu@example.com",
+      password: "Usu$1234",
       address: "Los Angeles",
       phone: "9876543210",
     },
