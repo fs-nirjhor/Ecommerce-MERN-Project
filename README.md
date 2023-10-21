@@ -20,6 +20,7 @@
     ~/api/users/activate -> verify JWT token and registered user
     ~/api/auth/login -> user login with jwt access token
     ~/api/auth/logout -> user logout
+    ~/api/auth/forgot-password -> user logout
 
 ### DELETE:
 
@@ -28,6 +29,6 @@
 ### UPDATE (put):
 
     ~/api/users/:id -> update user by id
-    ~/api/users/banned/:id -> banned user by id (admin)
-    ~/api/users/unbanned/:id -> unbanned user by id (admin)
+    ~/api/users/ban/:id -> banned user by id (admin)
+    ~/api/users/unban/:id -> unbanned user by id (admin)
     ~/api/users/update-password/:id -> update password by id

@@ -38,10 +38,10 @@ userRouter.post(
 );
 // api/users/activate
 userRouter.post("/activate", isLoggedOut, activateUserAccount);
-// api/users/banned/:id
-userRouter.put("/banned/:id", isLoggedIn, isAdmin, bannedUser)
-// api/users/unbanned/:id
-userRouter.put("/unbanned/:id", isLoggedIn, isAdmin, unbannedUser)
+// api/users/ban/:id
+userRouter.put("/ban/:id", isLoggedIn, isAdmin, bannedUser)
+// api/users/unban/:id
+userRouter.put("/unban/:id", isLoggedIn, isAdmin, unbannedUser)
 // api/users/update-password/:id
 userRouter.put("/update-password/:id", isLoggedIn, validateUpdatePassword, runValidations, updatePassword);
 // api/users/test
