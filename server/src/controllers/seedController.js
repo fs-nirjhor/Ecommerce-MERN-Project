@@ -10,7 +10,7 @@ const seedUser = async(req, res, next) => {
     // successful response
     res.status(201).json(users)
  } catch (error) {
-    next(error);
+    next(error); 
  }
 }
 
