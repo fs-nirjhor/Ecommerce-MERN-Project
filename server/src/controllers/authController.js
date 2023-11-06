@@ -107,7 +107,7 @@ const handleRefreshToken = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: "Refreshed token successfully",
-      //payload: { user: decoded.user },
+      payload: {},
     });
   } catch (error) {
     return next(error);
