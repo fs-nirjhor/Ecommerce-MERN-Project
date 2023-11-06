@@ -47,12 +47,9 @@ const handleLogin = async (req, res, next) => {
       //secure: true, // not include in headers
       sameSite: "none", // call from multiple addresses
     });
-    // prevent showing password in payload
-    const userWithoutPassword = await findOneItem(
-      User,
-      { email },
-      { password: 0 }
-    );
+    // prevent showing password in payload. user from database is not a pure object
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
     return successResponse(res, {
       statusCode: 200,
       message: "Logged in successfully",
@@ -104,11 +101,12 @@ const handleRefreshToken = async (req, res, next) => {
       //secure: true, // not include in headers
       sameSite: "none", // call from multiple addresses
     });
-    
+    const userWithoutPassword = { ...user };
+    delete userWithoutPassword.password;
     return successResponse(res, {
       statusCode: 200,
       message: "Refreshed token successfully",
-      payload: {},
+      payload: {user: userWithoutPassword},
     });
   } catch (error) {
     return next(error);
