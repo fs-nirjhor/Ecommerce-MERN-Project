@@ -37,6 +37,7 @@ const handleLogin = async (req, res, next) => {
     res.cookie("access_token", accessToken, {
       maxAge: 5 * 60 * 1000, // 5 minute
       httpOnly: true,
+      //TODO: secure is comment out for development purpose. secure cookies not work in postman but work in browser well. need 4 change in this file
       //secure: true, // not include in headers
       sameSite: "none", // call from multiple addresses
     });
