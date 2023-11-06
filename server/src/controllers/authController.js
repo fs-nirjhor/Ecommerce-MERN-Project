@@ -106,12 +106,33 @@ const handleRefreshToken = async (req, res, next) => {
     
     return successResponse(res, {
       statusCode: 200,
-      message: "Refreshing token successful",
+      message: "Refreshed token successfully",
       //payload: { user: decoded.user },
     });
   } catch (error) {
     return next(error);
   }
 };
+const handleProtectedRoute = async (req, res, next) => {
+  try {
+    const accessToken = req.cookies.access_token;
+    const decoded = jwt.verify(accessToken, jwtAccessKey);
+    if (!decoded) {
+      throw createHttpError(400, "JWT access token is invalid or expired");
+    }    
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Protected route accessed successfully",
+      payload: {},
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
 
-module.exports = { handleLogin, handleLogout, handleRefreshToken };
+module.exports = {
+  handleLogin,
+  handleLogout,
+  handleRefreshToken,
+  handleProtectedRoute,
+};
