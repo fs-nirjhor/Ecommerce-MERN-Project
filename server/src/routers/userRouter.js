@@ -40,17 +40,27 @@ userRouter.post("/activate", isLoggedOut, activateUserAccount);
 userRouter.post("/forget-password", validateForgetPassword, runValidations ,forgetPassword);
 // api/users/reset-password
 userRouter.put("/reset-password", validateResetPassword, runValidations, resetPassword);
-// api/users/update-password/:id
-userRouter.put("/update-password/:id", isLoggedIn, validateUpdatePassword, runValidations, updatePassword);
+// api/users/update-password/:id (validated mongoose id)
+userRouter.put("/update-password/:id([0-9a-fA-F]{24})", isLoggedIn, validateUpdatePassword, runValidations, updatePassword);
 // api/users/ban/:id
-userRouter.put("/ban/:id", isLoggedIn, isAdmin, bannedUser)
+userRouter.put("/ban/:id([0-9a-fA-F]{24})", isLoggedIn, isAdmin, bannedUser);
 // api/users/unban/:id
-userRouter.put("/unban/:id", isLoggedIn, isAdmin, unbannedUser)
+userRouter.put(
+  "/unban/:id([0-9a-fA-F]{24})",
+  isLoggedIn,
+  isAdmin,
+  unbannedUser
+);
 
 // api/users/:id
-userRouter.get("/:id", isLoggedIn, getUserById);
-userRouter.delete("/:id", isLoggedIn, deleteUser);
-userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUser);
+userRouter.get("/:id([0-9a-fA-F]{24})", isLoggedIn, getUserById);
+userRouter.delete("/:id([0-9a-fA-F]{24})", isLoggedIn, deleteUser);
+userRouter.put(
+  "/:id([0-9a-fA-F]{24})",
+  upload.single("image"),
+  isLoggedIn,
+  updateUser
+);
 // api/users/test
 userRouter.get("/test", (req, res) => {
   res.send("testing router");
