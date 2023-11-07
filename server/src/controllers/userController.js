@@ -20,7 +20,7 @@ const {
   maxImageSize,
 } = require("../config/config");
 
-const getAllUsers = async (req, res, next) => {
+const handleGetAllUsers = async (req, res, next) => {
   try {
     const search = req.query.search || "";
     const limit = Number(req.query.limit) || 5;
@@ -57,7 +57,7 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-const getUserById = async (req, res, next) => {
+const handleGetUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
@@ -72,7 +72,7 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-const deleteUser = async (req, res, next) => {
+const handleDeleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     await findItemById(User, id, { password: 0 });
@@ -94,7 +94,7 @@ const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
-const processRegister = async (req, res, next) => {
+const handleProcessRegister = async (req, res, next) => {
   try {
     // TODO: Here is double setup for upload image as String (path) or Buffer. Any one image should be choose here.
     //const image = req.file ? req.file.path : defaultUserImagePath;
@@ -133,7 +133,7 @@ const processRegister = async (req, res, next) => {
     next(error);
   }
 };
-const activateUserAccount = async (req, res, next) => {
+const handleActivateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     // verify jwt token
@@ -157,7 +157,7 @@ const activateUserAccount = async (req, res, next) => {
     next(error);
   }
 };
-const updateUser = async (req, res, next) => {
+const handleUpdateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const userById = await findItemById(User, id, { password: 0 });
@@ -201,7 +201,7 @@ const updateUser = async (req, res, next) => {
     next(error);
   }
 };
-const bannedUser = async (req, res, next) => {
+const handleBanUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await findItemById(User, id, { password: 0 });
@@ -224,7 +224,7 @@ const bannedUser = async (req, res, next) => {
     next(error);
   }
 };
-const unbannedUser = async (req, res, next) => {
+const handleUnbanUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await findItemById(User, id, { password: 0 });
@@ -247,7 +247,7 @@ const unbannedUser = async (req, res, next) => {
     next(error);
   }
 };
-const updatePassword = async (req, res, next) => {
+const handleUpdatePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const id = req.params.id;
@@ -277,7 +277,7 @@ const updatePassword = async (req, res, next) => {
     next(error);
   }
 };
-const forgetPassword = async (req, res, next) => {
+const handleForgetPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
     //? is user exist
@@ -308,9 +308,9 @@ const forgetPassword = async (req, res, next) => {
     next(error);
   }
 };
-const resetPassword = async (req, res, next) => {
+const handleResetPassword = async (req, res, next) => {
   try {
-    const {token, newPassword} = req.body;
+    const { token, newPassword } = req.body;
     // verify jwt token
     const decoded = await jwt.verify(token, jwtResetPasswordKey);
     if (!decoded) {
@@ -336,15 +336,15 @@ const resetPassword = async (req, res, next) => {
 };
 
 module.exports = {
-  getAllUsers,
-  getUserById,
-  deleteUser,
-  processRegister,
-  activateUserAccount,
-  updateUser,
-  bannedUser,
-  unbannedUser,
-  updatePassword,
-  forgetPassword,
-  resetPassword,
-}; 
+  handleGetAllUsers,
+  handleGetUserById,
+  handleDeleteUser,
+  handleProcessRegister,
+  handleActivateUserAccount,
+  handleUpdateUser,
+  handleBanUser,
+  handleUnbanUser,
+  handleUpdatePassword,
+  handleForgetPassword,
+  handleResetPassword,
+};
