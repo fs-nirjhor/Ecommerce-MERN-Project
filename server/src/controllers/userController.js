@@ -124,7 +124,6 @@ const handleProcessRegister = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
-      payload: {},
     });
   } catch (error) {
     next(error);
