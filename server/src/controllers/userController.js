@@ -119,15 +119,12 @@ const handleProcessRegister = async (req, res, next) => {
       <p>Click here to <a href='${clientUrl}/api/users/activate/${token}' target="_blank" rel="noopener noreferrer">activate your email</a></p>
       `,
     };
-    // todo: comment out mailInfo for testing purposes. remove it later
-    //const mailInfo = {};
     const mailInfo = await sendMail(mailData);
     if (!mailInfo) throw new Error("Couldn't send mail");
     return successResponse(res, {
       statusCode: 200,
       message: `Verification mail sent to ${email}`,
-      // todo: remove token from payload. its security issue. here is for testing.
-      payload: { token, /* mailInfo, */ newUser },
+      payload: {},
     });
   } catch (error) {
     next(error);
