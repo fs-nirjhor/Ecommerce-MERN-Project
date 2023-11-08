@@ -24,7 +24,7 @@ const sendMail = async (mailData) => {
     const info = await transporter.sendMail(mailOptions);
     return info;
   } catch (error) {
-    throw createHttpError(500, "Verification mail not sent");
+    throw createHttpError(500, "Failed to sent verification mail");
   }
 };
 
