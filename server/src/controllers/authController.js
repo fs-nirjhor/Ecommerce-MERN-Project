@@ -29,11 +29,9 @@ const handleLogin = async (req, res, next) => {
     if (user.isBanned) {
       throw createHttpError(403, "This account is banned");
     }
-    // create access token
+    // set access token
     const accessToken = await createJwt({ user }, jwtAccessKey, "5m");
-    const refreshToken = await createJwt({ user }, jwtRefreshKey, "7d");
-
-    // set cookie
+    
     res.cookie("access_token", accessToken, {
       maxAge: 5 * 60 * 1000, // 5 minute
       httpOnly: true,
@@ -41,11 +39,14 @@ const handleLogin = async (req, res, next) => {
       //secure: true, // not include in headers
       sameSite: "none", // call from multiple addresses
     });
+    
+    // set refresh token
+    const refreshToken = await createJwt({ user }, jwtRefreshKey, "7d");
     res.cookie("refresh_token", refreshToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day in milliseconds
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
       httpOnly: true,
-      //secure: true, // not include in headers
-      sameSite: "none", // call from multiple addresses
+      //secure: true, 
+      sameSite: "none", 
     });
     // prevent showing password in payload. user from database is not a pure object
     const userWithoutPassword = user.toObject();
@@ -84,22 +85,22 @@ const handleRefreshToken = async (req, res, next) => {
       throw createHttpError(400, "JWT refresh token is invalid or expired");
     }
     const user = decoded.user;
-    // create access token
+    // set access token
     const accessToken = await createJwt({ user }, jwtAccessKey, "5m");
-    const refreshToken = await createJwt({ user }, jwtRefreshKey, "7d");
-
-    // set cookie
     res.cookie("access_token", accessToken, {
       maxAge: 5 * 60 * 1000, // 5 minute
       httpOnly: true,
-      //secure: true, // not include in headers
-      sameSite: "none", // call from multiple addresses
+      //secure: true, 
+      sameSite: "none", 
     });
+    // set refresh token
+    const refreshToken = await createJwt({ user }, jwtRefreshKey, "7d");
+
     res.cookie("refresh_token", refreshToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day in milliseconds
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day 
       httpOnly: true,
-      //secure: true, // not include in headers
-      sameSite: "none", // call from multiple addresses
+      //secure: true, 
+      sameSite: "none", 
     });
     const userWithoutPassword = { ...user };
     delete userWithoutPassword.password;
