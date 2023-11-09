@@ -2,16 +2,17 @@
 
 const mongoose = require("mongoose");
 const { databaseUrl } = require("../secret");
+const logger = require("../helper/winstonLogger");
 
 const connectDB = async (options = {}) => {
   try {
     await mongoose.connect(databaseUrl, options);
-    console.log("Database connected successfully.");
+    logger.info("Database connected successfully");
     mongoose.connection.on("error", (error) => {
-      console.error(`Database Connection error`);
+      logger.error(`Database Connection error`);
     });
   } catch (error) {
-    console.error(`Couldn't connect to Database`);
+    logger.error(`Couldn't connect to Database`);
   }
 };
 
