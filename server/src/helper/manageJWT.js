@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const logger = require("./winstonLogger");
 
 const createJwt = (payload, jwtActivationKey, expiresIn = "10m") => {
   // check validity of payload
@@ -12,7 +13,7 @@ const createJwt = (payload, jwtActivationKey, expiresIn = "10m") => {
     const token = jwt.sign(payload, jwtActivationKey, { expiresIn: expiresIn });
     return token;
   } catch (error) {
-    console.log("Failed to sign JWT", error.message);
+    logger.error("Failed to create JWT", error.message);
     throw error;
   }
 };

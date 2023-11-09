@@ -6,6 +6,7 @@ const {
   allowedImageExtensions,
 } = require("../config/config");
 const createHttpError = require("http-errors");
+const logger = require("../helper/winstonLogger");
 
 const validateUserRegistration = [
   body("name")
@@ -46,7 +47,7 @@ const validateUserRegistration = [
     //! this image filter will not make any effect because the case's are already handled by multer filter.
     const image = req.file;
     if (!image) {
-       console.log("Image not selected");
+       logger.info("Image not selected");
        return true;
     }
     if (!image.mimetype.startsWith("image/")) {
