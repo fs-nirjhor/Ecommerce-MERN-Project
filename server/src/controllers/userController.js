@@ -139,7 +139,7 @@ const handleActivateUserAccount = async (req, res, next) => {
       throw createHttpError(400, "JWT token is invalid or expired");
     }
     // register new user to database
-    const user = await User.create(decoded);
+    const user = await createItem(User, decoded);
     return successResponse(res, {
       statusCode: 200,
       message: `User verified successfully`,
