@@ -9,6 +9,7 @@ const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
 const { errorResponse } = require("./controllers/responseController");
 const authRouter = require("./routers/authRouter");
+const categoryRouter = require("./routers/categoryRouter");
 
 // initialize
 const app = express();
@@ -48,6 +49,7 @@ app.get("/test", (req, res) => {
 app.use("/api/seed", seedRouter);
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/category", categoryRouter);
 
 // errors must handle just before app.listen
 // client error handler

@@ -1,3 +1,5 @@
+const { successResponse } = require("./responseController");
+
 const handleCreateCategory = async (req, res, next) => {
   try {
     const { name } = req.body;

@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-const validateCategoryRegistration = [
+const validateCategory = [
   body("name")
     .trim()
     .notEmpty()
@@ -9,5 +9,5 @@ const validateCategoryRegistration = [
 ];
 
 module.exports = {
-  validateCategoryRegistration,
+  validateCategory,
 };
