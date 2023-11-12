@@ -20,7 +20,9 @@ const findItemById = async (Model, id, options = {}) => {
 const findOneItem = async (Model, data, options = {}) => {
   try {
     if (typeof data !== "object" || Object.keys(data).length === 0) {
-      throw new Error("Please provide data as object to find one item");
+      throw new Error(
+        `Please provide data as object to find one ${Model.modelName}`
+      );
     }
     const item = await Model.findOne( data , options);
     if (!item) {

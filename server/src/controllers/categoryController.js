@@ -1,6 +1,7 @@
 const slugify = require("slugify");
 const { successResponse } = require("./responseController");
 const Category = require("../models/categoryModel");
+const { createItem } = require("../services/createItem");
 
 const handleCreateCategory = async (req, res, next) => {
   try {
@@ -13,7 +14,7 @@ const handleCreateCategory = async (req, res, next) => {
       locale: "vi",
       trim: true,
     });
-    const newCategory = await Category.create({ name, slug });
+    const newCategory = await createItem(Category, { name, slug });
     return successResponse(res, {
       statusCode: 201,
       message: "Category created successfully",
