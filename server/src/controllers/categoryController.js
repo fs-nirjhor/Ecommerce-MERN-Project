@@ -1,19 +1,13 @@
-const slugify = require("slugify");
+
 const { successResponse } = require("./responseController");
 const Category = require("../models/categoryModel");
 const { createItem } = require("../services/createItem");
+const createSlug = require("../helper/createSlug");
 
 const handleCreateCategory = async (req, res, next) => {
   try {
     const { name } = req.body;
-    const slug = slugify(name, {
-      replacement: "-",
-      remove: /[*+~.()'"!:@]/g,
-      lower: true,
-      strict: true,
-      locale: "vi",
-      trim: true,
-    });
+    const slug = createSlug(name);
     const newCategory = await createItem(Category, { name, slug });
     return successResponse(res, {
       statusCode: 201,
