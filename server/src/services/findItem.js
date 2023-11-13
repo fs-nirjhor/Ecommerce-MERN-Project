@@ -3,7 +3,7 @@ const createHttpError = require("http-errors");
 
 const findItemById = async (Model, id, options = {}) => {
   try {
-    const item = await Model.findById(id, options);
+    const item = await Model.findById(id, options).lean();
     if (!item) {
       throw createHttpError(404, `No ${Model.modelName} found by this id.`);
     }
@@ -24,9 +24,12 @@ const findOneItem = async (Model, data, options = {}) => {
         `Please provide data as object to find one ${Model.modelName}`
       );
     }
-    const item = await Model.findOne( data , options);
+    const item = await Model.findOne(data, options);
     if (!item) {
-      throw createHttpError(404, `No ${Model.modelName} found with this ${Object.keys(data)}.`);
+      throw createHttpError(
+        404,
+        `No ${Model.modelName} found with ${Object.keys(data)}.`
+      );
     }
     return item;
   } catch (error) {
@@ -37,5 +40,22 @@ const findOneItem = async (Model, data, options = {}) => {
     throw error;
   }
 };
+const findAllItem = async (Model) => {
+  try {
+    const items = await Model.find()
+      .select("-createdAt -updatedAt -__v")
+      .lean();
+    if (!items.length) {
+      throw createHttpError("404", `${Model.modelName} not found`);
+    }
+    return items;
+  } catch (error) {
+    // handle mongoose error
+    if (error instanceof mongoose.Error) {
+      throw createHttpError(400, `Invalid ${Model.modelName} key.`);
+    }
+    throw error;
+  }
+};
 
-module.exports = { findItemById, findOneItem };
+module.exports = { findItemById, findOneItem, findAllItem };

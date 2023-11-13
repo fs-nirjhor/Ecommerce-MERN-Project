@@ -4,7 +4,11 @@ const express = require("express");
 const { isLoggedIn, isAdmin } = require("../middlewares/auth");
 const runValidations = require("../validators");
 const { validateCategory } = require("../validators/categoryValidator");
-const { handleCreateCategory } = require("../controllers/categoryController");
+const {
+  handleCreateCategory,
+  handleGetAllCategories,
+  handleGetCategoryBySlug,
+} = require("../controllers/categoryController");
 const categoryRouter = express.Router();
 
 //POST: api/category
@@ -16,5 +20,9 @@ categoryRouter.post(
   runValidations,
   handleCreateCategory
 );
+//GET: api/category
+categoryRouter.get("/", handleGetAllCategories);
+//GET: api/category/:slug
+categoryRouter.get("/:slug", handleGetCategoryBySlug);
 
 module.exports = categoryRouter;
