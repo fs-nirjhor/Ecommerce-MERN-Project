@@ -10,7 +10,7 @@ const categorySchema = new Schema(
     },
     slug: {
       type: String,
-      required: [true, "Category name is required"],
+      required: [true, "Category slug is required"],
       trim: true,
       unique: true,
       lowercase: true,
