@@ -2,7 +2,8 @@ const { successResponse } = require("./responseController");
 const Category = require("../models/categoryModel");
 const { createItem } = require("../services/createItem");
 const createSlug = require("../helper/createSlug");
-const { findOneItem, findAllItem } = require("../services/findItem");
+const { findOneItem, findAllItem, updateItem } = require("../services/findItem");
+const createHttpError = require("http-errors");
 
 const handleCreateCategory = async (req, res, next) => {
   try {
@@ -50,10 +51,13 @@ const handleUpdateCategory = async (req, res, next) => {
     const { slug } = req.params;
     const { name } = req.body;
     const newSlug = createSlug(name);
+    if (slug === newSlug) { throw createHttpError(409, "Category is already updated"); }
     const filter = { slug };
     const updates = { $set: { name: name, slug: newSlug } };
     const options = { new: true, runValidators: true, context: "query" };
-    const updatedCategory = await Category.findOneAndUpdate(filter, updates, options);
+
+    const updatedCategory = await updateItem(Category, filter, updates, options);
+
     return successResponse(res, {
       statusCode: 200,
       message: "Category updated successfully",
