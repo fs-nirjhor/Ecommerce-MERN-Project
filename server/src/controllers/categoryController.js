@@ -30,7 +30,7 @@ const handleGetAllCategories = async (req, res, next) => {
     next(error);
   }
 };
-const handleGetCategoryBySlug = async (req, res, next) => {
+const handleGetCategory = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const category = await findOneItem(Category, { slug });
@@ -47,5 +47,5 @@ const handleGetCategoryBySlug = async (req, res, next) => {
 module.exports = {
   handleCreateCategory,
   handleGetAllCategories,
-  handleGetCategoryBySlug,
+  handleGetCategory,
 };
