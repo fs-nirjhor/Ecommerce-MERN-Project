@@ -8,6 +8,7 @@ const {
   handleCreateCategory,
   handleGetAllCategories,
   handleGetCategory,
+  handleUpdateCategory,
 } = require("../controllers/categoryController");
 const categoryRouter = express.Router();
 
@@ -24,5 +25,7 @@ categoryRouter.post(
 categoryRouter.get("/", handleGetAllCategories);
 //GET: api/category/:slug
 categoryRouter.get("/:slug", handleGetCategory);
+//UPDATE: api/category/:slug
+categoryRouter.put("/:slug", handleUpdateCategory);
 
 module.exports = categoryRouter;
