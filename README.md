@@ -4,7 +4,7 @@
 
 ### Backend:
 
-    express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcryptjs, jsonwebtoken, nodemailer, multer, cookie-parser, winston
+    express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcryptjs, jsonwebtoken, nodemailer, multer, cookie-parser, winston, slugify
 
 ## Routes
 
@@ -13,14 +13,22 @@
     ~/api/users -> get all users and get users by name, email or phone with limit and pagination (admin)
     ~/api/users/:id -> get user by id
 
+    ~/api/auth/refresh-token -> refresh access token
+    ~/api/auth/protected-route -> verify access token 
+
 ### POST:
 
     ~/api/seed/users -> seed initial fake data for users (admin)
+
     ~/api/users/process-register -> send verification mail with JWT link
     ~/api/users/activate -> verify JWT token and registered user
     ~/api/users/forgot-password -> send password reset email
+
     ~/api/auth/login -> user login with jwt access token
     ~/api/auth/logout -> user logout
+
+    ~/api/category -> create new category
+
    
 ### DELETE:
 
