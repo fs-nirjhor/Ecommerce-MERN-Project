@@ -13,6 +13,9 @@
     ~/api/auth/refresh-token -> refresh access token
     ~/api/auth/protected-route -> verify access token 
 
+    ~/api/category -> get all categories 
+    ~/api/category/:slug -> get category by slug 
+
 ### POST:
     ~/api/seed/users -> seed initial fake data for users (admin)
 
@@ -35,3 +38,5 @@
     ~/api/users/unban/:id -> unbanned user by id (admin)
     ~/api/users/update-password/:id -> update password by id
     ~/api/users/reset-password -> reset password by token
+
+    ~/api/category -> update category name and slug
