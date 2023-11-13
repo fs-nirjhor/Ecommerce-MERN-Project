@@ -57,22 +57,6 @@ const findAllItem = async (Model) => {
     throw error;
   }
 };
-const updateItem = async (Model, filter, updates, options) => {
-  try {
-    await findOneItem(Model, filter)
-    const updatedItem = await Model.findOneAndUpdate(
-      filter,
-      updates,
-      options
-    );
-    return updatedItem;
-  } catch (error) {
-    // handle mongoose error
-    if (error instanceof mongoose.Error) {
-      throw createHttpError(400, `Failed to update this ${Model.modelName}.`);
-    }
-    throw error;
-  }
-};
 
-module.exports = { findItemById, findOneItem, findAllItem, updateItem };
+
+module.exports = { findItemById, findOneItem, findAllItem };

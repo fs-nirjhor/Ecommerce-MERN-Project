@@ -2,8 +2,9 @@ const { successResponse } = require("./responseController");
 const Category = require("../models/categoryModel");
 const { createItem } = require("../services/createItem");
 const createSlug = require("../helper/createSlug");
-const { findOneItem, findAllItem, updateItem } = require("../services/findItem");
 const createHttpError = require("http-errors");
+const { findOneItem, findAllItem } = require("../services/findItem");
+const { updateItem } = require("../services/updateItem");
 
 const handleCreateCategory = async (req, res, next) => {
   try {

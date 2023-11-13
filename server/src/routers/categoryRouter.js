@@ -26,6 +26,13 @@ categoryRouter.get("/", handleGetAllCategories);
 //GET: api/category/:slug
 categoryRouter.get("/:slug", handleGetCategory);
 //UPDATE: api/category/:slug
-categoryRouter.put("/:slug", handleUpdateCategory);
+categoryRouter.put(
+  "/:slug",
+  isLoggedIn,
+  isAdmin,
+  validateCategory,
+  runValidations,
+  handleUpdateCategory
+);
 
 module.exports = categoryRouter;
