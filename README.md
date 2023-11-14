@@ -39,4 +39,4 @@
     ~/api/users/update-password/:id -> update password by id
     ~/api/users/reset-password -> reset password by token
 
-    ~/api/category -> update category name and slug
+    ~/api/category -> update category name and slug 
