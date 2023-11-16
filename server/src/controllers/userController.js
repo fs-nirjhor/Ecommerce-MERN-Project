@@ -19,6 +19,7 @@ const {
   defaultUserImageBuffer,
   maxImageSize,
 } = require("../config/config");
+const { deleteItem } = require("../services/deleteItem");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
@@ -76,14 +77,11 @@ const handleGetUserById = async (req, res, next) => {
 const handleDeleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    await findItemById(User, id, { password: 0 });
-    const deletedUser = await User.findOneAndDelete({
-      _id: id,
-      isAdmin: false,
-    });
-    if (!deletedUser) throw createHttpError(400, "User cannot be deleted");
+    const filter = { _id: id };
+    const options = { password: 0 };
+    const deletedUser = await deleteItem(User, filter, options);
     // removing saved image of deleted user
-    if (deletedUser.image !== defaultUserImagePath) {
+    if (deletedUser.image && deletedUser.image !== defaultUserImagePath) {
       deleteImage(deletedUser.image);
     }
     return successResponse(res, {

@@ -84,7 +84,7 @@ const handleDeleteCategory = async (req, res, next) => {
     const deletedCategory = await deleteItem(Category, filter);
     return successResponse(res, {
       statusCode: 200,
-      message: `${deletedCategory.name} deleted successfully`,
+      message: `${deletedCategory.name} category deleted successfully`,
     });
   } catch (error) {
     next(error);
