@@ -31,6 +31,7 @@
    
 ### DELETE:
     ~/api/users/:id -> delete user by id
+    ~/api/category -> delete category name and slug
 
 ### UPDATE (put):
     ~/api/users/:id -> update user by id
