@@ -5,6 +5,7 @@ const createSlug = require("../helper/createSlug");
 const createHttpError = require("http-errors");
 const { findOneItem, findAllItem } = require("../services/findItem");
 const { updateItem } = require("../services/updateItem");
+const { deleteItem } = require("../services/deleteItem");
 
 const handleCreateCategory = async (req, res, next) => {
   try {
@@ -52,12 +53,19 @@ const handleUpdateCategory = async (req, res, next) => {
     const { slug } = req.params;
     const { name } = req.body;
     const newSlug = createSlug(name);
-    if (slug === newSlug) { throw createHttpError(409, "Category is already updated"); }
+    if (slug === newSlug) {
+      throw createHttpError(409, "Category is already updated");
+    }
     const filter = { slug };
     const updates = { $set: { name: name, slug: newSlug } };
     const options = { new: true, runValidators: true, context: "query" };
 
-    const updatedCategory = await updateItem(Category, filter, updates, options);
+    const updatedCategory = await updateItem(
+      Category,
+      filter,
+      updates,
+      options
+    );
 
     return successResponse(res, {
       statusCode: 200,
@@ -73,13 +81,10 @@ const handleDeleteCategory = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const filter = { slug };
-    await findOneItem(Category, filter);
-    const deletedCategory = await Category.findOneAndDelete(filter);
-    if (!deletedCategory) throw createHttpError(400, "Failed to delete category");   
+    const deletedCategory = await deleteItem(Category, filter);
     return successResponse(res, {
       statusCode: 200,
-      message: "Category deleted successfully",
-      payload: { deletedCategory },
+      message: `${deletedCategory.name} deleted successfully`,
     });
   } catch (error) {
     next(error);
@@ -91,5 +96,5 @@ module.exports = {
   handleGetAllCategories,
   handleGetCategory,
   handleUpdateCategory,
-  handleDeleteCategory
+  handleDeleteCategory,
 };
