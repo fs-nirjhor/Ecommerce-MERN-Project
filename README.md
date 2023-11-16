@@ -26,7 +26,7 @@
     ~/api/auth/login -> user login with jwt access token
     ~/api/auth/logout -> user logout
 
-    ~/api/category -> create new category
+    ~/api/category -> create new category 
 
    
 ### DELETE:
