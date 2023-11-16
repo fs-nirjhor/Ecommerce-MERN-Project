@@ -69,9 +69,27 @@ const handleUpdateCategory = async (req, res, next) => {
   }
 };
 
+const handleDeleteCategory = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const filter = { slug };
+    await findOneItem(Category, filter);
+    const deletedCategory = await Category.findOneAndDelete(filter);
+    if (!deletedCategory) throw createHttpError(400, "Failed to delete category");   
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Category deleted successfully",
+      payload: { deletedCategory },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleCreateCategory,
   handleGetAllCategories,
   handleGetCategory,
   handleUpdateCategory,
+  handleDeleteCategory
 };
