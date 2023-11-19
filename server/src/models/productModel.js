@@ -37,7 +37,7 @@ const productSchema = new Schema(
       trim: true,
       validate: {
         validator: (v) => v > 0,
-        massage: (props) => `${props.value} is not a valid price`,
+        message: (props) => `${props.value} is not a valid price`,
       },
     },
     quantity: {
@@ -47,7 +47,7 @@ const productSchema = new Schema(
       trim: true,
       validate: {
         validator: (v) => v > 0 && Number.isInteger(v),
-        massage: (props) => `${props.value} is not a valid quantity`,
+        message: (props) => `${props.value} is not a valid quantity`,
       },
     },
     sold: {
@@ -57,7 +57,7 @@ const productSchema = new Schema(
       min: [0, "Products sold amount is must be greater than zero"],
       validate: {
         validator: Number.isInteger,
-        massage: `{VALUE} is not a valid sold amount`,
+        message: `{VALUE} is not a valid sold amount`,
       },
     },
     shipping: {
@@ -75,6 +75,6 @@ const productSchema = new Schema(
   { timestamps: true }
 );
 
-const Product = model("Products", productSchema);
+const Product = model("Product", productSchema);
 
 module.exports = Product;

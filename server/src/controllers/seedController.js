@@ -1,7 +1,8 @@
 const fakeData = require("../fakeData");
+const Product = require("../models/productModel");
 const User = require("../models/userModel");
 
-const handleSeedUser = async (req, res, next) => {
+const handleSeedUsers = async (req, res, next) => {
   try {
     // deleting all existing users
     await User.deleteMany({});
@@ -13,5 +14,14 @@ const handleSeedUser = async (req, res, next) => {
     next(error);
   }
 };
+const handleSeedProducts = async (req, res, next) => {
+  try {
+    await Product.deleteMany({});
+    const products = await Product.insertMany(fakeData.products);
+    res.status(201).json(products);
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports = {handleSeedUser};
+module.exports = { handleSeedUsers, handleSeedProducts };

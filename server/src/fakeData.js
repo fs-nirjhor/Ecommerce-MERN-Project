@@ -155,7 +155,7 @@ const fakeData = {
       quantity: 80,
       sold: 20,
       shipping: 15,
-      category: "6555e3f485e9675f5b1324b9", // ObjectId
+      category: "9555e3f485e9675f5b1324b9", // ObjectId
     },
     {
       name: "Samsung Galaxy S21 Ultra",
