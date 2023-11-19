@@ -23,8 +23,8 @@ const {
 const runValidations = require("../validators");
 // TODO: image can be uploaded as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one import should be choose here.
 const upload = require("../middlewares/uploadBufferFile"); //buffer
-const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 // const upload = require("../middlewares/uploadFile");  //string
+const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 
 const userRouter = express.Router();
 
