@@ -14,4 +14,4 @@ const handleSeedUser = async (req, res, next) => {
   }
 };
 
-module.exports = handleSeedUser;
+module.exports = {handleSeedUser};
