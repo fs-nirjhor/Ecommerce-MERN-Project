@@ -24,7 +24,7 @@ const productSchema = new Schema(
       required: [true, "Products description is required"],
       trim: true,
       minLength: [10, "Products description should more than 10 characters"],
-      maxLength: [250, "Products description should less than 250 characters"],
+      maxLength: [500, "Products description should less than 500 characters"],
     },
     image: {
       type: String,
