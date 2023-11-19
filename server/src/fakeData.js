@@ -146,11 +146,11 @@ const fakeData = {
     },
   ],
   categories: [
-    { name: "Mobile Phone", slug: "mobile-phone" },
-    { name: "Laptop", slug: "laptop" },
-    { name: "Smart Watch", slug: "smart-watch" },
-    { name: "TV", slug: "tv" },
-    { name: "Smart Gadgets", slug: "smart-gadgets" },
+    { name: "Mobile Phone" },
+    { name: "Laptop" },
+    { name: "Smart Watch" },
+    { name: "Android TV" },
+    { name: "Smart Gadgets" },
   ],
   products: [
     {

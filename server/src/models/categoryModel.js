@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const createSlug = require("../helper/createSlug");
 
 const categorySchema = new Schema(
   {
@@ -10,6 +11,9 @@ const categorySchema = new Schema(
     },
     slug: {
       type: String,
+      default: function () {
+        return createSlug(this.name);
+      },
       required: [true, "Category slug is required"],
       trim: true,
       unique: true,
