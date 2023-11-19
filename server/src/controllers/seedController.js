@@ -1,6 +1,8 @@
 const fakeData = require("../fakeData");
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
+const seedItems = require("../services/seedItem");
+const { successResponse } = require("./responseController");
 
 const handleSeedUsers = async (req, res, next) => {
   try {
@@ -16,9 +18,13 @@ const handleSeedUsers = async (req, res, next) => {
 };
 const handleSeedProducts = async (req, res, next) => {
   try {
-    await Product.deleteMany({});
-    const products = await Product.insertMany(fakeData.products);
-    res.status(201).json(products);
+    data = fakeData.products;
+    const products = await seedItems(Product, data);
+    return successResponse(res, {
+      statusCode: 201,
+      message: "Products seed successfully",
+      payload: { products },
+    });
   } catch (error) {
     next(error);
   }
