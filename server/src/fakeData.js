@@ -145,6 +145,13 @@ const fakeData = {
       phone: "5555555555",
     },
   ],
+  categories: [
+    { name: "Mobile Phone", slug: "mobile-phone" },
+    { name: "Laptop", slug: "laptop" },
+    { name: "Smart Watch", slug: "smart-watch" },
+    { name: "TV", slug: "tv" },
+    { name: "Smart Gadgets", slug: "smart-gadgets" },
+  ],
   products: [
     {
       name: "I-Phone 12 Pro",
