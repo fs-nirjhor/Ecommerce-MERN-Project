@@ -2,6 +2,7 @@
 
 const { Schema, model } = require("mongoose");
 const { defaultProductImagePath } = require("../config/config");
+const createSlug = require("../helper/createSlug");
 
 const productSchema = new Schema(
   {
@@ -14,6 +15,9 @@ const productSchema = new Schema(
     },
     slug: {
       type: String,
+      default: function () {
+        return createSlug(this.name);
+      },
       required: [true, "Products slug is required"],
       trim: true,
       unique: true,
@@ -42,8 +46,8 @@ const productSchema = new Schema(
     },
     quantity: {
       type: Number,
-      required: [true, "Products quantity is required"],
       default: 1,
+      required: [true, "Products quantity is required"],
       trim: true,
       validate: {
         validator: (v) => v > 0 && Number.isInteger(v),

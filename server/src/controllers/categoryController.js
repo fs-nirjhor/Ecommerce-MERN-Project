@@ -21,6 +21,7 @@ const handleCreateCategory = async (req, res, next) => {
     next(error);
   }
 };
+
 const handleGetAllCategories = async (req, res, next) => {
   try {
     const categories = await findAllItem(Category);
