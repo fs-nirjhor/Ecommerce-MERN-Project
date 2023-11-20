@@ -30,6 +30,8 @@
 
     ~/api/category -> create new category (admin)
 
+    ~/api/products -> add new product (admin)
+
    
 ### DELETE:
     ~/api/users/:id -> delete user by id
