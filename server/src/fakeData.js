@@ -1,4 +1,4 @@
-// random user data
+// fake data for seeding 
 
 const fakeData = {
   users: [
