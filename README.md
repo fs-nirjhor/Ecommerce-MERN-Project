@@ -1,4 +1,4 @@
-# MERN Stack E-commerce Project (under development)
+# MERN Stack E-commerce Project (under development) 
 
 ## Packages
 

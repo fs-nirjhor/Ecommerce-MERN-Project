@@ -18,9 +18,9 @@ const createItem = async (Model, data) => {
           `This ${Model.modelName} is already created.`
         );
       }
-        if (error instanceof mongoose.Error) {
+       /*  if (error instanceof mongoose.Error) {
           throw createHttpError(400, `Failed to create ${Model.modelName}.`);
-        }
+        } */
     throw error;
   }
 };
