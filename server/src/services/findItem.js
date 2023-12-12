@@ -33,10 +33,6 @@ const findOneItem = async (Model, data, options = {}) => {
     }
     return item;
   } catch (error) {
-    // handle mongoose error
-    if (error instanceof mongoose.Error) {
-      throw createHttpError(400, `Failed to find this ${Model.modelName}.`);
-    }
     throw error;
   }
 };

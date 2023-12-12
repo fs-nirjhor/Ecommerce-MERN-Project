@@ -54,4 +54,18 @@ const handleGetAllProducts = async (req, res, next) => {
   }
 };
 
-module.exports = { handleCreateProduct, handleGetAllProducts };
+const handleGetProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const product = await Product.findOne({ slug }).populate("category").select("-createdAt -updatedAt -__v");
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Product get successfully",
+      payload: { product },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { handleCreateProduct, handleGetAllProducts, handleGetProduct };
