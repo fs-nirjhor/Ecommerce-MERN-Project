@@ -3,7 +3,7 @@
 const express = require("express");
 const { isLoggedIn, isAdmin } = require("../middlewares/auth");
 const runValidations = require("../validators");
-const { handleCreateProduct, handleGetAllProducts, handleGetProduct } = require("../controllers/productController");
+const { handleCreateProduct, handleGetAllProducts, handleGetProduct, handleDeleteProduct } = require("../controllers/productController");
 const { validateProduct } = require("../validators/productValidator");
 const upload = require("../middlewares/uploadProductImage");
 
@@ -25,6 +25,9 @@ productRouter.get("/", handleGetAllProducts)
 
 //GET: api/products/slug
 productRouter.get("/:slug", handleGetProduct)
+
+//DELETE: api/products/slug
+productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteProduct)
 
 
 module.exports = productRouter;

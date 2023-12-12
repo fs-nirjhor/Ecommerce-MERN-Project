@@ -4,6 +4,7 @@ const createHttpError = require("http-errors");
 const Product = require("../models/productModel");
 const { defaultProductImagePath } = require("../config/config");
 const { setPagination } = require("../helper/managePagination");
+const { deleteItem } = require("../services/deleteItem");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -72,9 +73,23 @@ const handleGetProduct = async (req, res, next) => {
     next(error);
   }
 };
+const handleDeleteProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const deletedProduct = await deleteItem(Product, { slug }); 
+    return successResponse(res, {
+      statusCode: 200,
+      message: `${deletedProduct.name} deleted successfully`,
+      payload: { deletedProduct },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   handleCreateProduct,
   handleGetAllProducts,
   handleGetProduct,
+  handleDeleteProduct
 };

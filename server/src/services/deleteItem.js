@@ -10,16 +10,13 @@ const deleteItem = async (Model, data, options = {}) => {
       );
     }
     await findOneItem(Model, data, options);
-    const deletedItem = await Model.findOneAndDelete(data, options);
+    const deletedItem = await Model.findOneAndDelete(data, options)
+    .select("-createdAt -updatedAt -__v");
     if (!deletedItem) {
       throw createHttpError(400, `Failed to delete this ${Model.modelName}`);
     }
     return deletedItem;
   } catch (error) {
-    // handle mongoose error
-    if (error instanceof mongoose.Error) {
-      throw createHttpError(400, `Failed to delete this ${Model.modelName}.`);
-    }
     throw error;
   }
 };
