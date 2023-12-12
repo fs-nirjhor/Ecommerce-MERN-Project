@@ -72,7 +72,7 @@ const productSchema = new Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "Category", // to populate category 
       required: [true, "Products category is required"],
     },
   },
