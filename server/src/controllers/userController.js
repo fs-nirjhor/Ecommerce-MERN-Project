@@ -48,14 +48,14 @@ const handleGetAllUsers = async (req, res, next) => {
       next: page + 1 <= Math.ceil(count / limit) ? page + 1 : null,
     };
     if (!users || users.length === 0)
-      throw createHttpError(404, "No users found"); // this error will be catch()
+      throw createHttpError(404, "No users found"); 
     return successResponse(res, {
       statusCode: 200,
       message: `${users.length} / ${count} users returned`,
       payload: { users, pagination },
     });
   } catch (error) {
-    next(error); // next refers to error handler.
+    next(error); 
   }
 };
 

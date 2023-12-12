@@ -3,7 +3,7 @@ const Category = require("../models/categoryModel");
 const { createItem } = require("../services/createItem");
 const createSlug = require("../helper/createSlug");
 const createHttpError = require("http-errors");
-const { findOneItem, findAllItem } = require("../services/findItem");
+const { findOneItem } = require("../services/findItem");
 const { updateItem } = require("../services/updateItem");
 const { deleteItem } = require("../services/deleteItem");
 
@@ -24,13 +24,21 @@ const handleCreateCategory = async (req, res, next) => {
 
 const handleGetAllCategories = async (req, res, next) => {
   try {
-    const categories = await findAllItem(Category);
+    const categories = await Category.find()
+      .select("-createdAt -updatedAt -__v")
+      .lean();
+    if (!categories.length) {
+      throw createHttpError(404, "No Category found");
+    }
     return successResponse(res, {
       statusCode: 200,
       message: "Categories fetched successfully",
       payload: { categories },
     });
   } catch (error) {
+    if (error instanceof mongoose.Error) {
+      throw createHttpError(400, `Failed to fetch ${Model.modelName}.`);
+    }
     next(error);
   }
 };

@@ -40,23 +40,5 @@ const findOneItem = async (Model, data, options = {}) => {
     throw error;
   }
 };
-const findAllItem = async (Model) => {
-  try {
-    const items = await Model.find()
-      .select("-createdAt -updatedAt -__v")
-      .lean();
-    if (!items.length) {
-      throw createHttpError(404, `${Model.modelName} not found`);
-    }
-    return items;
-  } catch (error) {
-    // handle mongoose error
-    if (error instanceof mongoose.Error) {
-      throw createHttpError(400, `Failed to fetch ${Model.modelName}.`);
-    }
-    throw error;
-  }
-};
 
-
-module.exports = { findItemById, findOneItem, findAllItem };
+module.exports = { findItemById, findOneItem };
