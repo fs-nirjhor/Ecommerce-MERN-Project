@@ -36,7 +36,9 @@ const handleGetAllProducts = async (req, res, next) => {
     const products = await Product.find(filter)
     .limit(limit)
     .skip((page - 1) * limit)
-    .populate("category");
+    .populate("category")
+    .sort({ createdAt: -1})
+    .select("-createdAt -updatedAt -__v");
     const count = await Product.find(filter).countDocuments();
     const pagination = setPagination(count, limit, page);
     if (!products || products.length === 0) {

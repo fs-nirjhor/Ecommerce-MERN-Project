@@ -40,7 +40,8 @@ const handleGetAllUsers = async (req, res, next) => {
     const options = { password: 0 }; // not include
     const users = await User.find(filter, options)
       .limit(limit)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .select("-createdAt -updatedAt -__v");
     const count = await User.find(filter).countDocuments();
     const pagination = setPagination(count, limit, page);
     if (!users || users.length === 0) {
