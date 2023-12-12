@@ -34,11 +34,11 @@ const handleGetAllProducts = async (req, res, next) => {
       ],
     };
     const products = await Product.find(filter)
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .populate("category")
-    .sort({ createdAt: -1})
-    .select("-createdAt -updatedAt -__v");
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .populate("category")
+      .sort({ createdAt: -1 })
+      .select("-createdAt -updatedAt -__v");
     const count = await Product.find(filter).countDocuments();
     const pagination = setPagination(count, limit, page);
     if (!products || products.length === 0) {
@@ -57,7 +57,12 @@ const handleGetAllProducts = async (req, res, next) => {
 const handleGetProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const product = await Product.findOne({ slug }).populate("category").select("-createdAt -updatedAt -__v");
+    const product = await Product.findOne({ slug })
+      .populate("category")
+      .select("-createdAt -updatedAt -__v");
+    if (!product) {
+      throw createHttpError(404, "No product found with this slug");
+    }
     return successResponse(res, {
       statusCode: 200,
       message: "Product get successfully",
@@ -68,4 +73,8 @@ const handleGetProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { handleCreateProduct, handleGetAllProducts, handleGetProduct };
+module.exports = {
+  handleCreateProduct,
+  handleGetAllProducts,
+  handleGetProduct,
+};
