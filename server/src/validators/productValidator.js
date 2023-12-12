@@ -6,47 +6,62 @@ const {
   allowedImageExtensions,
 } = require("../config/config");
 const createHttpError = require("http-errors");
-const logger = require("../helper/winstonLogger");
+const mongoose = require("mongoose");
+const Category = require("../models/categoryModel");
 
 const validateProduct = [
   body("name")
-    .trim() // remove unnecessary whitespace
-    .notEmpty() // required
-    .withMessage("Please enter your name.")
-    .isLength({ min: 3, max: 31 })
-    .withMessage("User name should have 3-31 characters."),
-  body("image")
-  .custom((value, { req }) => {
-    //! this image filter will not make any effect because the case's are already handled by multer filter.
-    const image = req.file;
-    if (!image) {
-       logger.info("Image not selected");
-       return true;
-    }
-    if (!image.mimetype.startsWith("image/")) {
-      throw new Error("Only image is allowed");
-    }
-
-    const allowedMimetypePattern = new RegExp(
-      `^image\/(${allowedImageExtensions.join("|")})$`,
-      "i"
-    );
-    if (!allowedMimetypePattern.test(image.mimetype)) {
-      throw new Error(
-        `Invalid image format. Only ${allowedImageExtensions
-          .join(", ")
-          .toUpperCase()} are allowed.`
-      );
-    }
-
-    if (image.size > maxImageSize) {
-      throw new Error(
-        `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
-      );
-    }
-    return true;
-  }),
+    .trim()
+    .notEmpty()
+    .withMessage("Products name is required.")
+    .isLength({ max: 100 })
+    .withMessage("Products name should less than 100 characters."),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("Products description is required.")
+    .isLength({ min: 10, max: 100 })
+    .withMessage("Products description should 10-100 characters."),
+  body("image"),
+  body("price")
+    .trim()
+    .notEmpty()
+    .withMessage("Products price is required.")
+    .isNumeric()
+    .custom((v) => {
+      return v > 0;
+    })
+    .withMessage("Products price must be positive number."),
+  body("quantity")
+    .trim()
+    .isInt({ min: 1 })
+    .withMessage("Products quantity must be positive number.")
+    .default(1),
+  body("sold")
+    .default(1)
+    .trim()
+    .isInt({ min: 1 })
+    .withMessage("Products sold amount must be positive number."),
+  body("shipping")
+    .default(0)
+    .trim()
+    .isNumeric({ min: 0 })
+    .withMessage("Products shipping cost must be positive number."),
+  body("category")
+    .trim()
+    .notEmpty()
+    .withMessage("Products category is required.")
+    .custom(async (v) => {
+      const isValid = mongoose.Types.ObjectId.isValid(v);
+      if (!isValid) {
+        throw createHttpError("The category must be a valid ObjectId.");
+      }
+      const isExist = await Category.exists({ _id: v });
+      if (!isExist) {
+        throw createHttpError("This category is not exist in database.");
+      }
+      return true;
+    }),
 ];
-
 
 module.exports = { validateProduct };
