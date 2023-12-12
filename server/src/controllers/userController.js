@@ -43,15 +43,16 @@ const handleGetAllUsers = async (req, res, next) => {
       .skip((page - 1) * limit);
     const count = await User.find(filter).countDocuments();
     const pagination = setPagination(count, limit, page);
-    if (!users || users.length === 0)
-      throw createHttpError(404, "No users found"); 
+    if (!users || users.length === 0) {
+      throw createHttpError(404, "No users found");
+    }
     return successResponse(res, {
       statusCode: 200,
       message: `${users.length} / ${count} users returned`,
       payload: { users, pagination },
     });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 

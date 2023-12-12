@@ -3,6 +3,7 @@ const { createItem } = require("../services/createItem");
 const createHttpError = require("http-errors");
 const Product = require("../models/productModel");
 const { defaultProductImagePath } = require("../config/config");
+const { setPagination } = require("../helper/managePagination");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -12,11 +13,43 @@ const handleCreateProduct = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 201,
       message: `Product added successfully`,
-      payload: {product}
+      payload: { product },
     });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { handleCreateProduct };
+const handleGetAllProducts = async (req, res, next) => {
+  try {
+    const search = req.query.search || "";
+    const limit = parseInt(req.query.limit) || 5;
+    const page = parseInt(req.query.page) || 1;
+    const regExp = new RegExp(".*" + search + ".*", "i");
+    const filter = {
+      $or: [
+        { name: { $regex: regExp } },
+        { slug: { $regex: regExp } },
+        { description: { $regex: regExp } },
+      ],
+    };
+    const products = await Product.find(filter)
+    .limit(limit)
+    .skip((page - 1) * limit)
+    .populate("category");
+    const count = await Product.find(filter).countDocuments();
+    const pagination = setPagination(count, limit, page);
+    if (!products || products.length === 0) {
+      throw createHttpError(404, "No products found");
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: `${products.length} / ${count} products returned`,
+      payload: { products, pagination },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { handleCreateProduct, handleGetAllProducts };

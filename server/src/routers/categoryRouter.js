@@ -42,4 +42,4 @@ categoryRouter.delete(
   handleDeleteCategory
 );
 
-module.exports = categoryRouter;
+module.exports = categoryRouter; 
