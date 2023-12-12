@@ -7,7 +7,7 @@
 
 ## Routes
 ### Get:
-    ~/api/users -> get all users and get users by name, email or phone with limit and pagination (admin)
+    ~/api/users -> get all users and search user by name, email or phone with limit and pagination (admin)
     ~/api/users/:id -> get user by id
 
     ~/api/auth/refresh-token -> refresh access token
@@ -15,6 +15,8 @@
 
     ~/api/category -> get all categories 
     ~/api/category/:slug -> get category by slug 
+
+    ~/api/products -> get all product with pagination and search query 
 
 ### POST:
     ~/api/seed/users -> seed initial fake data for users (admin)
