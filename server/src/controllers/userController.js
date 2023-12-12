@@ -20,6 +20,7 @@ const {
   maxImageSize,
 } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
+const { setPagination } = require("../helper/managePagination");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
@@ -28,9 +29,9 @@ const handleGetAllUsers = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const userRegExp = new RegExp(".*" + search + ".*", "i");
     const filter = {
-      isAdmin: { $ne: true }, // not equal
+      isAdmin: { $ne: true }, // not admin
+      // multiple filters
       $or: [
-        // multiple filters
         { name: { $regex: userRegExp } },
         { email: { $regex: userRegExp } },
         { phone: { $regex: userRegExp } },
@@ -41,12 +42,7 @@ const handleGetAllUsers = async (req, res, next) => {
       .limit(limit)
       .skip((page - 1) * limit);
     const count = await User.find(filter).countDocuments();
-    const pagination = {
-      total: Math.ceil(count / limit),
-      current: page,
-      previous: page - 1 > 0 ? page - 1 : null,
-      next: page + 1 <= Math.ceil(count / limit) ? page + 1 : null,
-    };
+    const pagination = setPagination(count, limit, page);
     if (!users || users.length === 0)
       throw createHttpError(404, "No users found"); 
     return successResponse(res, {
