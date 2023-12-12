@@ -24,8 +24,8 @@ const { deleteItem } = require("../services/deleteItem");
 const handleGetAllUsers = async (req, res, next) => {
   try {
     const search = req.query.search || "";
-    const limit = Number(req.query.limit) || 5;
-    const page = Number(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const page = parseInt(req.query.page) || 1;
     const userRegExp = new RegExp(".*" + search + ".*", "i");
     const filter = {
       isAdmin: { $ne: true }, // not equal
