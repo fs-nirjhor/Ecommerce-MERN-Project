@@ -2,9 +2,10 @@ const { successResponse } = require("./responseController");
 const { createItem } = require("../services/createItem");
 const createHttpError = require("http-errors");
 const Product = require("../models/productModel");
-const { defaultProductImagePath } = require("../config/config");
+const { defaultProductImagePath, maxImageSize } = require("../config/config");
 const { setPagination } = require("../helper/managePagination");
 const { deleteItem } = require("../services/deleteItem");
+const { findOneItem } = require("../services/findItem");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -87,9 +88,54 @@ const handleDeleteProduct = async (req, res, next) => {
   }
 };
 
+const handleUpdateProduct = async (req, res, next) => {
+  try {
+    const slug = req.params.slug;
+    const currentProduct = await findOneItem(Product, {slug});
+    const updates = {};
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const updateKeys = ["name", "description", "price", "quantity", "sold", "shipping", "category"];
+    const { user, ...data } = req.body; // user is set in req.body from isLoggedIn middleware. it must not include in data
+    for (let key in data) {
+       if (!updateKeys.includes(key)) {
+        throw createHttpError(400, `${key} can\'t be updated`);
+      } 
+      if (data[key] === currentProduct[key]) {
+        throw createHttpError(409, `${key} is already updated`);
+      }
+      updates[key] = data[key];
+    }
+    const image = req.file;
+    if (image) {
+      if (image.size > maxImageSize) {
+        throw new Error(
+          `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
+        );
+      }
+      updates.image = image.path;
+    }
+    const updatedProduct = await Product.findOneAndUpdate(
+      {slug},
+      updates,
+      updateOptions
+    ).populate("category").select("-createdAt -updatedAt -__v");
+    if (!updatedProduct) {
+      throw new Error("Product can't be updated");
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Product updated successfully",
+      payload: { updatedProduct },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleCreateProduct,
   handleGetAllProducts,
   handleGetProduct,
-  handleDeleteProduct
+  handleDeleteProduct,
+  handleUpdateProduct
 };

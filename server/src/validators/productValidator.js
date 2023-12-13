@@ -22,7 +22,7 @@ const validateProduct = [
     .withMessage("Products description is required.")
     .isLength({ min: 10, max: 100 })
     .withMessage("Products description should 10-100 characters."),
-  body("image"),
+  body("image"), // validated by multer
   body("price")
     .trim()
     .notEmpty()
