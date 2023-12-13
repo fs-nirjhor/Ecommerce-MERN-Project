@@ -28,13 +28,13 @@ const handleGetAllProducts = async (req, res, next) => {
     const search = req.query.search || "";
     const limit = parseInt(req.query.limit) || 5;
     const page = parseInt(req.query.page) || 1;
-    const regExp = new RegExp(".*" + search + ".*", "i");
+    const searchRegExp = new RegExp(".*" + search + ".*", "i");
     const filter = {
       $or: [
-        { name: { $regex: regExp } },
-        { slug: { $regex: regExp } },
-        { description: { $regex: regExp } },
-        { category: { $regex: regExp } },
+        { name: { $regex: searchRegExp } },
+        { slug: { $regex: searchRegExp } },
+        { description: { $regex: searchRegExp } },
+        { category: { $regex: searchRegExp } },
       ],
     };
     const products = await Product.find(filter)
