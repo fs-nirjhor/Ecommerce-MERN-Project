@@ -35,8 +35,6 @@ productRouter.put(
   upload.single("image"),
   isLoggedIn,
   isAdmin,
-  validateProduct,
-  runValidations,
   handleUpdateProduct
 );
 

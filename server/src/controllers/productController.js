@@ -6,6 +6,7 @@ const { defaultProductImagePath, maxImageSize } = require("../config/config");
 const { setPagination } = require("../helper/managePagination");
 const { deleteItem } = require("../services/deleteItem");
 const { findOneItem } = require("../services/findItem");
+const createSlug = require("../helper/createSlug");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -105,6 +106,11 @@ const handleUpdateProduct = async (req, res, next) => {
       }
       updates[key] = data[key];
     }
+
+    if(data.name){
+      updates.slug = createSlug(data.name);
+    }
+
     const image = req.file;
     if (image) {
       if (image.size > maxImageSize) {
@@ -114,6 +120,7 @@ const handleUpdateProduct = async (req, res, next) => {
       }
       updates.image = image.path;
     }
+    
     const updatedProduct = await Product.findOneAndUpdate(
       {slug},
       updates,
