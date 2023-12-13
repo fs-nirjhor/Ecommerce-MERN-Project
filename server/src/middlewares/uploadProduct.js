@@ -6,7 +6,7 @@ const {
   productImagePath,
 } = require("../config/config");
 
-const storage = multer.diskStorage({
+const productStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, productImagePath);
   },
@@ -29,10 +29,10 @@ const fileFilter = (req, file, cb) => {
   return cb(null, true);
 };
 
-const upload = multer({
-  storage,
+const uploadProductImage = multer({
+  productStorage,
   limits: { fileSize: maxImageSize },
   fileFilter,
 });
 
-module.exports = upload;
+module.exports = uploadProductImage;
