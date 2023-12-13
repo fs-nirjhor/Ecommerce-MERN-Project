@@ -27,7 +27,7 @@ const validateProduct = [
     .trim()
     .notEmpty()
     .withMessage("Products price is required.")
-    .isNumeric()
+    .isFloat()
     .custom((v) => {
       return v > 0;
     })
