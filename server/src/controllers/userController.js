@@ -27,14 +27,14 @@ const handleGetAllUsers = async (req, res, next) => {
     const search = req.query.search || "";
     const limit = parseInt(req.query.limit) || 5;
     const page = parseInt(req.query.page) || 1;
-    const userRegExp = new RegExp(".*" + search + ".*", "i");
+    const searchRegExp = new RegExp(".*" + search + ".*", "i");
     const filter = {
       isAdmin: { $ne: true }, // not admin
       // multiple filters
       $or: [
-        { name: { $regex: userRegExp } },
-        { email: { $regex: userRegExp } },
-        { phone: { $regex: userRegExp } },
+        { name: { $regex: searchRegExp } },
+        { email: { $regex: searchRegExp } },
+        { phone: { $regex: searchRegExp } },
       ],
     };
     const options = { password: 0 }; // not include
