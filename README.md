@@ -17,6 +17,7 @@
     ~/api/category/:slug -> get category by slug 
 
     ~/api/products -> get all product with pagination and search query 
+    ~/api/products/:slug -> get single product by slug
 
 ### POST:
     ~/api/seed/users -> seed initial fake data for users (admin)
@@ -37,7 +38,8 @@
    
 ### DELETE:
     ~/api/users/:id -> delete user by id
-    ~/api/category -> delete category by slug (admin)
+    ~/api/category/:slug -> delete category by slug (admin)
+    ~/api/products/:slug -> delete product (admin)
 
 ### UPDATE (put):
     ~/api/users/:id -> update user by id
@@ -46,4 +48,6 @@
     ~/api/users/update-password/:id -> update password by id
     ~/api/users/reset-password -> reset password by token
 
-    ~/api/category -> update category name and slug
+    ~/api/category/:slug -> update category name and slug (admin)
+
+    ~/api/products/:slug -> update product (admin)
