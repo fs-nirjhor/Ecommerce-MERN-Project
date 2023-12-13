@@ -34,6 +34,7 @@ const handleGetAllProducts = async (req, res, next) => {
         { name: { $regex: regExp } },
         { slug: { $regex: regExp } },
         { description: { $regex: regExp } },
+        { category: { $regex: regExp } },
       ],
     };
     const products = await Product.find(filter)
