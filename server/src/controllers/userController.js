@@ -79,9 +79,7 @@ const handleDeleteUser = async (req, res, next) => {
     const options = { password: 0 };
     const deletedUser = await deleteItem(User, filter, options);
     // removing saved image of deleted user
-    if (deletedUser.image !== defaultUserImagePath) {
-      deleteImage(deletedUser.image);
-    }
+    deleteImage(deletedUser.image, defaultUserImagePath);
     return successResponse(res, {
       statusCode: 200,
       message: "User deleted successfully",
@@ -185,7 +183,7 @@ const handleUpdateUser = async (req, res, next) => {
       throw new Error("User can't be updated");
     }
     // delete ex image after update 
-    image && currentUser.image !== defaultUserImagePath && deleteImage(currentUser.image);
+    image && deleteImage(currentUser.image, defaultUserImagePath);
 
     return successResponse(res, {
       statusCode: 200,
