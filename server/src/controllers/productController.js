@@ -11,7 +11,7 @@ const deleteImage = require("../helper/deleteImage");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
-    const image = req.file ? req.file.path : defaultProductImagePath;
+    const image = req.file?.path || defaultProductImagePath;
     const newProduct = { ...req.body, image };
     const product = await createItem(Product, newProduct);
     return successResponse(res, {

@@ -93,7 +93,7 @@ const handleDeleteUser = async (req, res, next) => {
 const handleProcessRegister = async (req, res, next) => {
   try {
     // TODO: Here is double setup for upload image as String (path) or Buffer. Any one image should be choose here.
-    const image = req.file ? req.file.path : defaultUserImagePath;
+    const image = req.file?.path || defaultUserImagePath;
     /* const image = req.file
       ? req.file.buffer.toString("base64")
       : defaultUserImageBuffer; */
