@@ -7,6 +7,7 @@ const { setPagination } = require("../helper/managePagination");
 const { deleteItem } = require("../services/deleteItem");
 const { findOneItem } = require("../services/findItem");
 const createSlug = require("../helper/createSlug");
+const deleteImage = require("../helper/deleteImage");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -79,6 +80,7 @@ const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const deletedProduct = await deleteItem(Product, { slug }); 
+    deleteImage(deletedProduct.image, defaultProductImagePath);
     return successResponse(res, {
       statusCode: 200,
       message: `${deletedProduct.name} deleted successfully`,
@@ -128,6 +130,7 @@ const handleUpdateProduct = async (req, res, next) => {
     if (!updatedProduct) {
       throw new Error("Product can't be updated");
     }
+    image && deleteImage(currentProduct.image, defaultProductImagePath);
     return successResponse(res, {
       statusCode: 200,
       message: "Product updated successfully",
