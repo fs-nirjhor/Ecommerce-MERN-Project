@@ -79,7 +79,7 @@ const handleDeleteUser = async (req, res, next) => {
     const options = { password: 0 };
     const deletedUser = await deleteItem(User, filter, options);
     // removing saved image of deleted user
-    if (deletedUser.image && deletedUser.image !== defaultUserImagePath) {
+    if (deletedUser.image !== defaultUserImagePath) {
       deleteImage(deletedUser.image);
     }
     return successResponse(res, {
@@ -91,21 +91,19 @@ const handleDeleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
 const handleProcessRegister = async (req, res, next) => {
   try {
     // TODO: Here is double setup for upload image as String (path) or Buffer. Any one image should be choose here.
-    //const image = req.file ? req.file.path : defaultUserImagePath;
-    const image = req.file
+    const image = req.file ? req.file.path : defaultUserImagePath;
+    /* const image = req.file
       ? req.file.buffer.toString("base64")
-      : defaultUserImageBuffer;
+      : defaultUserImageBuffer; */
     const newUser = { ...req.body, image };
     const { name, email } = newUser;
-    // check if email already registered
     const isRegistered = await User.exists({ email: email });
-    // conflict error
     if (isRegistered)
       throw createHttpError(409, "Email already be registered. Please login.");
-    // create jwt token
     const token = createJwt(newUser, jwtActivationKey, "10m");
     // send verification email
     const mailData = {
@@ -153,7 +151,7 @@ const handleActivateUserAccount = async (req, res, next) => {
 const handleUpdateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const userById = await findItemById(User, id, { password: 0 });
+    const currentUser = await findItemById(User, id, { password: 0 });
     const updates = {};
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const updateKeys = ["name", "phone", "address"];
@@ -163,7 +161,7 @@ const handleUpdateUser = async (req, res, next) => {
       if (!updateKeys.includes(key)) {
         throw createHttpError(400, `${key} can\'t be updated`);
       }
-      if (data[key] === userById[key]) {
+      if (data[key] === currentUser[key]) {
         throw createHttpError(409, `${key} is already updated`);
       }
       updates[key] = data[key];
@@ -175,7 +173,8 @@ const handleUpdateUser = async (req, res, next) => {
           `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
         );
       }
-      updates.image = image.buffer.toString("base64");
+      //updates.image = image.buffer.toString("base64");
+      updates.image = image.path;
     }
     const updatedUser = await User.findByIdAndUpdate(
       id,
@@ -185,6 +184,9 @@ const handleUpdateUser = async (req, res, next) => {
     if (!updatedUser) {
       throw new Error("User can't be updated");
     }
+    // delete ex image after update 
+    image && currentUser.image !== defaultUserImagePath && deleteImage(currentUser.image);
+
     return successResponse(res, {
       statusCode: 200,
       message: "User updated successfully",

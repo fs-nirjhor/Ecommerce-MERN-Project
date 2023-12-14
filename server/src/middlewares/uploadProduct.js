@@ -30,7 +30,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const uploadProductImage = multer({
-  productStorage,
+  storage: productStorage,
   limits: { fileSize: maxImageSize },
   fileFilter,
 });

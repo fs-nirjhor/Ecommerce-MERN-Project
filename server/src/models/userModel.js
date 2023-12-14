@@ -40,15 +40,15 @@ const userSchema = new Schema(
       ],
       set: (v) => bcrypt.hashSync(v, 10),
     },
-    // TODO: image can be stored as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one model should be choose here.
-    image: {
+    // TODO: path string or buffer string
+    /* image: {
       type: Buffer,
       contentType: String,
-    },
-    /* image: {
+    }, */
+    image: {
       type: String,
       default: defaultUserImagePath,
-    }, */
+    },
     address: {
       type: String,
       required: [true, "Address is required"],

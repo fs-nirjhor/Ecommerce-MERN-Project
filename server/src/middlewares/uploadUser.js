@@ -6,7 +6,7 @@ const {
   userImagePath,
 } = require("../config/config");
 
-const storage = multer.diskStorage({
+const userStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, userImagePath);
   },
@@ -22,17 +22,17 @@ const fileFilter = (req, file, cb) => {
   const extension = path.extname(file.originalname).substring(1);
   if (!allowedImageExtensions.includes(extension)) {
     const error = new Error(
-      `Try allowed file types (${allowedImageExtensions})`
+      `Try allowed image file types (${allowedImageExtensions})`
     );
     return cb(error, false);
   }
   return cb(null, true);
 };
 
-const upload = multer({
-  storage,
+const uploadUserImage = multer({
+  storage: userStorage,
   limits: { fileSize: maxImageSize },
   fileFilter,
 });
 
-module.exports = upload;
+module.exports = uploadUserImage;

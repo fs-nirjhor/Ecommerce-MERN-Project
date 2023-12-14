@@ -1,7 +1,5 @@
 const { body } = require("express-validator");
 const {
-  defaultUserImagePath,
-  defaultUserImageBuffer,
   maxImageSize,
   allowedImageExtensions,
 } = require("../config/config");

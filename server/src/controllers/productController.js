@@ -34,7 +34,6 @@ const handleGetAllProducts = async (req, res, next) => {
         { name: { $regex: searchRegExp } },
         { slug: { $regex: searchRegExp } },
         { description: { $regex: searchRegExp } },
-        { category: { $regex: searchRegExp } },
       ],
     };
     const products = await Product.find(filter)
@@ -111,8 +110,8 @@ const handleUpdateProduct = async (req, res, next) => {
     if(data.name){
       updates.slug = createSlug(data.name);
     }
-
     const image = req.file;
+    console.log(image)
     if (image) {
       if (image.size > maxImageSize) {
         throw new Error(

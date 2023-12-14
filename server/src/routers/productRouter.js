@@ -12,9 +12,9 @@ const productRouter = express.Router();
 //POST: api/products
 productRouter.post(
   "/",
-  uploadProductImage.single("image"),
   isLoggedIn,
   isAdmin,
+  uploadProductImage.single("image"),
   validateProduct,
   runValidations,
   handleCreateProduct
@@ -32,9 +32,9 @@ productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteProduct)
 //PUT: api/products
 productRouter.put(
   "/:slug",
-  uploadProductImage.single("image"),
   isLoggedIn,
   isAdmin,
+  uploadProductImage.single("image"),
   handleUpdateProduct
 );
 
