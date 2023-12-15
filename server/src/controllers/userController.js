@@ -4,7 +4,11 @@ const createHttpError = require("http-errors");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
-const { findItemById, findOneItem, findAllUsers } = require("../services/findItem");
+const {
+  findItemById,
+  findOneItem,
+  findAllUsers,
+} = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
 const { createJwt } = require("../helper/manageJWT");
 const {
@@ -14,19 +18,20 @@ const {
 } = require("../secret");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
-const {
-  defaultUserImagePath,
-  maxImageSize,
-} = require("../config/config");
+const { defaultUserImagePath, maxImageSize } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
-const { updateIsBanned } = require("../services/updateItem");
+const { updateIsBanned, updateItem } = require("../services/updateItem");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
     const search = req.query.search || "";
     const limit = parseInt(req.query.limit) || 5;
     const page = parseInt(req.query.page) || 1;
-    const {users, count, pagination} = await findAllUsers(search, limit, page);
+    const { users, count, pagination } = await findAllUsers(
+      search,
+      limit,
+      page
+    );
     return successResponse(res, {
       statusCode: 200,
       message: `${users.length} / ${count} users returned`,
@@ -154,11 +159,13 @@ const handleUpdateUser = async (req, res, next) => {
       //updates.image = image.buffer.toString("base64");
       updates.image = image.path;
     }
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
+    const updatedUser = await updateItem(
+      User,
+      { _id: id },
       updates,
       updateOptions
-    ).select("-password");
+    );
+    delete updatedUser.password;
     if (!updatedUser) {
       throw new Error("User can't be updated");
     }

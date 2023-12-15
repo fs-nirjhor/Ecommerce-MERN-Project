@@ -6,7 +6,7 @@ const User = require("../models/userModel");
 const updateItem = async (Model, filter, updates, options) => {
   try {
     await findOneItem(Model, filter);
-    const updatedItem = await Model.findOneAndUpdate(filter, updates, options);
+    const updatedItem = await Model.findOneAndUpdate(filter, updates, options).select("-createdAt -updatedAt -__v").lean();
     if (!updatedItem) {
       throw createHttpError(400, "Failed to update");
     }
@@ -54,4 +54,5 @@ const updateIsBanned = async (id, action) => {
   }
 };
 
-module.exports = { updateItem, updateIsBanned }
+
+module.exports = { updateItem, updateIsBanned };
