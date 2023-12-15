@@ -288,7 +288,6 @@ const handleUserStatus = async (req, res, next) => {
     const id = req.params.id;
     const action = req.body.action;
     const user = await findItemById(User, id, { password: 0 });
-
     let status;
     switch (action) {
       case "ban":
@@ -298,9 +297,8 @@ const handleUserStatus = async (req, res, next) => {
         status = false;
         break;
       default:
-        throw createHttpError(400, `Invalid action: ${action}. Only "ban" and "unban" are allowed`);
+        throw createHttpError(400, `Invalid action (${action}). Only ban and unban are allowed`);
     }
-    
     if (user.isBanned === status) {
       throw createHttpError(
         409,
