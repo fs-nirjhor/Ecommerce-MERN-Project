@@ -13,6 +13,7 @@ const {
   handleUpdatePassword,
   handleForgetPassword,
   handleResetPassword,
+  handleUserStatus,
 } = require("../controllers/userController");
 const {
   validateUserRegistration,
@@ -71,6 +72,13 @@ userRouter.put(
   isLoggedIn,
   isAdmin,
   handleUnbanUser
+);
+// api/users/status/:id
+userRouter.put(
+  "/status/:id([0-9a-fA-F]{24})",
+  isLoggedIn,
+  isAdmin,
+  handleUserStatus
 );
 
 // api/users/:id

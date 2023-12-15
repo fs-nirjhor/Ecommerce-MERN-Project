@@ -182,7 +182,7 @@ const handleUpdateUser = async (req, res, next) => {
     if (!updatedUser) {
       throw new Error("User can't be updated");
     }
-    // delete ex image after update 
+    // delete ex image after update
     image && deleteImage(currentUser.image, defaultUserImagePath);
 
     return successResponse(res, {
@@ -328,6 +328,52 @@ const handleResetPassword = async (req, res, next) => {
   }
 };
 
+const handleUserStatus = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const action = req.body.action;
+    const user = await findItemById(User, id, { password: 0 });
+    let status;
+    let successMessage;
+    switch (action) {
+      case "ban":
+        status = true;
+        successMessage = `${user.name} is banned successfully`;
+        break;
+      case "unban":
+        status = false;
+        successMessage = `${user.name} is unbanned successfully`;
+        break;
+      default:
+        throw createHttpError(400, `Invalid action: ${action}`);
+    }
+    if (user.isBanned === status) {
+      throw createHttpError(
+        409,
+        `${user.name} is already ${status ? "banned" : "unbanned"}`
+      );
+    }
+    const update = { isBanned: status };
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    const bannedUser = await User.findByIdAndUpdate(
+      id,
+      update,
+      updateOptions
+    ).select("-password");
+    if (!bannedUser) throw new Error("User status can't be changed");
+    return successResponse(res, {
+      statusCode: 200,
+      message: `${bannedUser.name} is ${
+        bannedUser.isBanned ? "banned" : "unbanned"
+      } successfully`,
+      payload: { bannedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleGetAllUsers,
   handleGetUserById,
@@ -340,4 +386,5 @@ module.exports = {
   handleUpdatePassword,
   handleForgetPassword,
   handleResetPassword,
+  handleUserStatus,
 };
