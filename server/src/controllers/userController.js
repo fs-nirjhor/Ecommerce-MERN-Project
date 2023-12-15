@@ -4,7 +4,7 @@ const createHttpError = require("http-errors");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
-const { findItemById, findOneItem } = require("../services/findItem");
+const { findItemById, findOneItem, findAllUsers } = require("../services/findItem");
 const deleteImage = require("../helper/deleteImage");
 const { createJwt } = require("../helper/manageJWT");
 const {
@@ -16,11 +16,9 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const {
   defaultUserImagePath,
-  defaultUserImageBuffer,
   maxImageSize,
 } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
-const { setPagination } = require("../helper/managePagination");
 const { updateIsBanned } = require("../services/updateItem");
 
 const handleGetAllUsers = async (req, res, next) => {
@@ -28,26 +26,7 @@ const handleGetAllUsers = async (req, res, next) => {
     const search = req.query.search || "";
     const limit = parseInt(req.query.limit) || 5;
     const page = parseInt(req.query.page) || 1;
-    const searchRegExp = new RegExp(".*" + search + ".*", "i");
-    const filter = {
-      isAdmin: { $ne: true }, // not admin
-      // multiple filters
-      $or: [
-        { name: { $regex: searchRegExp } },
-        { email: { $regex: searchRegExp } },
-        { phone: { $regex: searchRegExp } },
-      ],
-    };
-    const options = { password: 0 }; // not include
-    const users = await User.find(filter, options)
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .select("-createdAt -updatedAt -__v");
-    const count = await User.find(filter).countDocuments();
-    const pagination = setPagination(count, limit, page);
-    if (!users || users.length === 0) {
-      throw createHttpError(404, "No users found");
-    }
+    const {users, count, pagination} = await findAllUsers(search, limit, page);
     return successResponse(res, {
       statusCode: 200,
       message: `${users.length} / ${count} users returned`,
