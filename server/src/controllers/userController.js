@@ -194,52 +194,7 @@ const handleUpdateUser = async (req, res, next) => {
     next(error);
   }
 };
-const handleBanUser = async (req, res, next) => {
-  try {
-    const id = req.params.id;
-    const user = await findItemById(User, id, { password: 0 });
-    if (user.isBanned)
-      throw createHttpError(409, `${user.name} is already banned`);
-    const updates = { isBanned: true };
-    const updateOptions = { new: true, runValidators: true, context: "query" };
-    const bannedUser = await User.findByIdAndUpdate(
-      id,
-      updates,
-      updateOptions
-    ).select("-password");
-    if (!bannedUser) throw new Error(`${user.name} can't be banned`);
-    return successResponse(res, {
-      statusCode: 200,
-      message: `${user.name} is banned successfully`,
-      payload: { bannedUser },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-const handleUnbanUser = async (req, res, next) => {
-  try {
-    const id = req.params.id;
-    const user = await findItemById(User, id, { password: 0 });
-    if (!user.isBanned)
-      throw createHttpError(409, `${user.name} is not banned`);
-    const updates = { isBanned: false };
-    const updateOptions = { new: true, runValidators: true, context: "query" };
-    const unbannedUser = await User.findByIdAndUpdate(
-      id,
-      updates,
-      updateOptions
-    ).select("-password");
-    if (!bannedUser) throw new Error(`${user.name} can't be unbanned`);
-    return successResponse(res, {
-      statusCode: 200,
-      message: `${user.name} is unbanned successfully`,
-      payload: { unbannedUser },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+
 const handleUpdatePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -333,20 +288,19 @@ const handleUserStatus = async (req, res, next) => {
     const id = req.params.id;
     const action = req.body.action;
     const user = await findItemById(User, id, { password: 0 });
+
     let status;
-    let successMessage;
     switch (action) {
       case "ban":
         status = true;
-        successMessage = `${user.name} is banned successfully`;
         break;
       case "unban":
         status = false;
-        successMessage = `${user.name} is unbanned successfully`;
         break;
       default:
-        throw createHttpError(400, `Invalid action: ${action}`);
+        throw createHttpError(400, `Invalid action: ${action}. Only "ban" and "unban" are allowed`);
     }
+    
     if (user.isBanned === status) {
       throw createHttpError(
         409,
@@ -381,8 +335,6 @@ module.exports = {
   handleProcessRegister,
   handleActivateUserAccount,
   handleUpdateUser,
-  handleBanUser,
-  handleUnbanUser,
   handleUpdatePassword,
   handleForgetPassword,
   handleResetPassword,

@@ -8,8 +8,6 @@ const {
   handleProcessRegister,
   handleActivateUserAccount,
   handleUpdateUser,
-  handleBanUser,
-  handleUnbanUser,
   handleUpdatePassword,
   handleForgetPassword,
   handleResetPassword,
@@ -64,15 +62,7 @@ userRouter.put(
   runValidations,
   handleUpdatePassword
 );
-// api/users/ban/:id
-userRouter.put("/ban/:id([0-9a-fA-F]{24})", isLoggedIn, isAdmin, handleBanUser);
-// api/users/unban/:id
-userRouter.put(
-  "/unban/:id([0-9a-fA-F]{24})",
-  isLoggedIn,
-  isAdmin,
-  handleUnbanUser
-);
+
 // api/users/status/:id
 userRouter.put(
   "/status/:id([0-9a-fA-F]{24})",
