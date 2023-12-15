@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const createHttpError = require("http-errors");
-const { findOneItem } = require("./findItem");
+const { findOneItem, findItemById } = require("./findItem");
+const User = require("../models/userModel");
 
 const updateItem = async (Model, filter, updates, options) => {
   try {
@@ -18,5 +19,39 @@ const updateItem = async (Model, filter, updates, options) => {
     throw error;
   }
 };
+const updateIsBanned = async (id, action) => {
+  try {
+    const user = await findItemById(User, id, { password: 0 });
+    let status;
+    switch (action) {
+      case "ban":
+        status = true;
+        break;
+      case "unban":
+        status = false;
+        break;
+      default:
+        throw createHttpError(400, `Invalid action (${action}). Only ban and unban are allowed`);
+    }
+    if (user.isBanned === status) {
+      throw createHttpError(
+        409,
+        `${user.name} is already ${status ? "banned" : "unbanned"}`
+      );
+    }
+    const update = { isBanned: status };
+    const updateOptions = { new: true, runValidators: true, context: "query" };
 
-module.exports = { updateItem }
+    const bannedUser = await User.findByIdAndUpdate(
+      id,
+      update,
+      updateOptions
+    ).select("-password");
+    if (!bannedUser) throw new Error(`Failed to ${action}`);
+    return bannedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = { updateItem, updateIsBanned }

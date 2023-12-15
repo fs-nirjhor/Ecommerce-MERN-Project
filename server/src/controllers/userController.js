@@ -21,6 +21,7 @@ const {
 } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
 const { setPagination } = require("../helper/managePagination");
+const { updateIsBanned } = require("../services/updateItem");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
@@ -287,33 +288,7 @@ const handleUserStatus = async (req, res, next) => {
   try {
     const id = req.params.id;
     const action = req.body.action;
-    const user = await findItemById(User, id, { password: 0 });
-    let status;
-    switch (action) {
-      case "ban":
-        status = true;
-        break;
-      case "unban":
-        status = false;
-        break;
-      default:
-        throw createHttpError(400, `Invalid action (${action}). Only ban and unban are allowed`);
-    }
-    if (user.isBanned === status) {
-      throw createHttpError(
-        409,
-        `${user.name} is already ${status ? "banned" : "unbanned"}`
-      );
-    }
-    const update = { isBanned: status };
-    const updateOptions = { new: true, runValidators: true, context: "query" };
-
-    const bannedUser = await User.findByIdAndUpdate(
-      id,
-      update,
-      updateOptions
-    ).select("-password");
-    if (!bannedUser) throw new Error("User status can't be changed");
+    const bannedUser = await updateIsBanned(id, action);
     return successResponse(res, {
       statusCode: 200,
       message: `${bannedUser.name} is ${
