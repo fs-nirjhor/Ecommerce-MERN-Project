@@ -31,7 +31,7 @@ const handleLogin = async (req, res, next) => {
       throw createHttpError(403, "This account is banned");
     }
     // set access token
-    const accessToken = await createJwt({ user }, jwtAccessKey, "5m");
+    const accessToken = await createJwt({ user }, jwtAccessKey, "10m");
     setAccessTokenCookie(res, accessToken);
     
     // set refresh token
@@ -76,7 +76,7 @@ const handleRefreshToken = async (req, res, next) => {
     }
     const user = decoded.user;
     // set access token
-    const accessToken = await createJwt({ user }, jwtAccessKey, "5m");
+    const accessToken = await createJwt({ user }, jwtAccessKey, "10m");
     setAccessTokenCookie(res, accessToken);
 
     // set refresh token
