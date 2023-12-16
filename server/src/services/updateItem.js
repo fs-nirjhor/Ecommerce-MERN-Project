@@ -3,7 +3,7 @@ const createHttpError = require("http-errors");
 const { findOneItem, findItemById } = require("./findItem");
 const User = require("../models/userModel");
 
-const updateItem = async (Model, filter, updates, options) => {
+const updateItem = async (Model, filter, updates, options={}) => {
   try {
     await findOneItem(Model, filter);
     const updatedItem = await Model.findOneAndUpdate(filter, updates, options).select("-createdAt -updatedAt -__v").lean();
@@ -15,6 +15,21 @@ const updateItem = async (Model, filter, updates, options) => {
     // handle mongoose error
     if (error instanceof mongoose.Error) {
       throw createHttpError(400, `Failed to update this ${Model.modelName}.`);
+    }
+    throw error;
+  }
+};
+const updateItemById = async (Model, id, updates, options={}) => {
+  try {
+    await findItemById(Model, id);
+    const updatedItem = await Model.findByIdAndUpdate(id, updates, options).select("-createdAt -updatedAt -__v").lean();
+    if (!updatedItem) {
+      throw createHttpError(400, "Failed to update");
+    }
+    return updatedItem;
+  } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      throw createHttpError(400, `Invalid ${Model.modelName} id.`);
     }
     throw error;
   }
@@ -55,4 +70,4 @@ const updateIsBanned = async (id, action) => {
 };
 
 
-module.exports = { updateItem, updateIsBanned };
+module.exports = { updateItem, updateItemById, updateIsBanned };

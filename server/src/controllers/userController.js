@@ -20,7 +20,7 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const { defaultUserImagePath, maxImageSize } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
-const { updateIsBanned, updateItem } = require("../services/updateItem");
+const { updateIsBanned, updateItem, updateItemById } = require("../services/updateItem");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
@@ -159,9 +159,9 @@ const handleUpdateUser = async (req, res, next) => {
       //updates.image = image.buffer.toString("base64");
       updates.image = image.path;
     }
-    const updatedUser = await updateItem(
+    const updatedUser = await updateItemById(
       User,
-      { _id: id },
+      id,
       updates,
       updateOptions
     );
@@ -197,9 +197,9 @@ const handleUpdatePassword = async (req, res, next) => {
     }
     const updates = { $set: { password: newPassword } };
     const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updatedUser = await updateItem(
+    const updatedUser = await updateItemById(
       User,
-      { _id: id },
+      id,
       updates,
       updateOptions
     );
@@ -217,8 +217,6 @@ const handleForgetPassword = async (req, res, next) => {
     const { email } = req.body;
     //? is user exist
     const user = await findOneItem(User, { email });
-
-    // create jwt token
     const token = createJwt({ id: user._id }, jwtResetPasswordKey, "10m");
     // send verification email
     const mailData = {
@@ -229,14 +227,12 @@ const handleForgetPassword = async (req, res, next) => {
       <p>Click here to <a href='${clientUrl}/api/users/reset-password/${token}' target="_blank" rel="noopener noreferrer">Reset your password</a></p>
       `,
     };
-    // TODO: comment out mailInfo for testing purposes. remove it later
-    //const mailInfo = {};
     const mailInfo = await sendMail(mailData);
     if (!mailInfo) throw new Error("Couldn't send mail");
     return successResponse(res, {
       statusCode: 200,
       message: `Reset password mail sent to ${email}`,
-      // TODO: remove token from payload. its security issue. here is for testing.
+      // TODO: remove token from payload
       payload: { token },
     });
   } catch (error) {
@@ -254,16 +250,16 @@ const handleResetPassword = async (req, res, next) => {
     // reset password
     const updates = { password: newPassword };
     const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await updateItemById(
+      User,
       decoded.id,
       updates,
       updateOptions
-    ).select("-password");
+    )
     if (!updatedUser) throw new Error("Password can't be updated");
     return successResponse(res, {
       statusCode: 200,
       message: `Password reset successfully`,
-      payload: { updatedUser },
     });
   } catch (error) {
     next(error);
