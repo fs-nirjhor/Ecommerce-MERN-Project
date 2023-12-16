@@ -197,16 +197,16 @@ const handleUpdatePassword = async (req, res, next) => {
     }
     const updates = { $set: { password: newPassword } };
     const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
+    const updatedUser = await updateItem(
+      User,
+      { _id: id },
       updates,
       updateOptions
-    ).select("-password");
+    );
     if (!updatedUser) throw new Error("Password can't be updated");
     return successResponse(res, {
       statusCode: 200,
       message: "password is updated successfully",
-      payload: { updatedUser },
     });
   } catch (error) {
     next(error);
