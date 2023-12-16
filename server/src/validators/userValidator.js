@@ -94,11 +94,7 @@ const validateUpdatePassword = [
   body("currentPassword")
     .trim()
     .notEmpty()
-    .withMessage("Please enter your current password.")
-    .isStrongPassword()
-    .withMessage(
-      "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
-    ),
+    .withMessage("Please enter your current password."),
   body("newPassword")
     .trim()
     .notEmpty()
