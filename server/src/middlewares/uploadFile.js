@@ -55,4 +55,4 @@ const uploadProductImage = multer({
   fileFilter,
 });
 
-module.exports = uploadUserImage;
+module.exports = {uploadUserImage, uploadProductImage };

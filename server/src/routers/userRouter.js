@@ -22,7 +22,7 @@ const {
 const runValidations = require("../validators");
 // TODO: path string or buffer string
 //const upload = require("../middlewares/uploadBufferFile"); //buffer
-const uploadUserImage = require("../middlewares/uploadUser");  //string
+const { uploadUserImage } = require("../middlewares/uploadFile"); //string
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 
 const userRouter = express.Router();

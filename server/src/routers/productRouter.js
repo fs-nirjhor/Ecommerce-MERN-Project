@@ -5,7 +5,7 @@ const { isLoggedIn, isAdmin } = require("../middlewares/auth");
 const runValidations = require("../validators");
 const { handleCreateProduct, handleGetAllProducts, handleGetProduct, handleDeleteProduct, handleUpdateProduct } = require("../controllers/productController");
 const { validateProduct } = require("../validators/productValidator");
-const uploadProductImage = require("../middlewares/uploadProduct");
+const {uploadProductImage} = require("../middlewares/uploadFile");
 
 const productRouter = express.Router();
 

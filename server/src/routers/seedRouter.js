@@ -8,12 +8,16 @@ const {
   handleSeedCategories,
 } = require("../controllers/seedController");
 const seedRouter = express.Router();
-// TODO: image can be uploaded as string (save image to server and save path to database) or buffer (save image as buffer to database). Any one import should be choose here.
+// TODO: image can be uploaded as path string or buffer string
 //const upload = require("../middlewares/uploadBufferFile"); //buffer
-const uploadUserImage = require("../middlewares/uploadUser"); //string
+const {
+  uploadUserImage,
+  uploadProductImage,
+} = require("../middlewares/uploadFile"); //string
 const { validateUserRegistration } = require("../validators/userValidator");
 const runValidations = require("../validators");
 const { validateProduct } = require("../validators/productValidator");
+const { validateCategory } = require("../validators/categoryValidator");
 
 // api/seed/users
 seedRouter.post(
@@ -30,12 +34,19 @@ seedRouter.post(
   "/products",
   isLoggedIn,
   isAdmin,
-  uploadUserImage.single("image"),
+  uploadProductImage.single("image"),
   validateProduct,
   runValidations,
   handleSeedProducts
 );
 // api/seed/categories
-seedRouter.post("/categories", isLoggedIn, isAdmin, handleSeedCategories);
+seedRouter.post(
+  "/categories",
+  isLoggedIn,
+  isAdmin,
+  validateCategory,
+  runValidations,
+  handleSeedCategories
+);
 
 module.exports = seedRouter;
