@@ -79,7 +79,7 @@ const handleGetProduct = async (req, res, next) => {
 const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const deletedProduct = await deleteItem(Product, { slug }); 
+    const deletedProduct = await deleteItem(Product, { slug });
     deleteImage(deletedProduct.image, defaultProductImagePath);
     return successResponse(res, {
       statusCode: 200,
@@ -94,22 +94,33 @@ const handleDeleteProduct = async (req, res, next) => {
 const handleUpdateProduct = async (req, res, next) => {
   try {
     const slug = req.params.slug;
-    const currentProduct = await findOneItem(Product, {slug});
+    const currentProduct = await findOneItem(Product, { slug });
     const updates = {};
     const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updateKeys = ["name", "description", "price", "quantity", "sold", "shipping", "category"];
+    const updateKeys = [
+      "name",
+      "description",
+      "price",
+      "quantity",
+      "sold",
+      "shipping",
+      "category",
+    ];
     const { user, ...data } = req.body; // user is set in req.body from isLoggedIn middleware. it must not include in data
+    if (Object.keys(data).length === 0) {
+      throw createHttpError(400, "Nothing to update");
+    }
     for (let key in data) {
-       if (!updateKeys.includes(key)) {
+      if (!updateKeys.includes(key)) {
         throw createHttpError(400, `${key} can\'t be updated`);
-      } 
-      if (data[key] === currentProduct[key]) {
+      }
+      if (data[key] == currentProduct[key]) {
         throw createHttpError(409, `${key} is already updated`);
       }
       updates[key] = data[key];
     }
 
-    if(data.name){
+    if (data.name) {
       updates.slug = createSlug(data.name);
     }
     const image = req.file;
@@ -121,12 +132,14 @@ const handleUpdateProduct = async (req, res, next) => {
       }
       updates.image = image.path;
     }
-    
+
     const updatedProduct = await Product.findOneAndUpdate(
-      {slug},
+      { slug },
       updates,
       updateOptions
-    ).populate("category").select("-createdAt -updatedAt -__v");
+    )
+      .populate("category")
+      .select("-createdAt -updatedAt -__v");
     if (!updatedProduct) {
       throw new Error("Product can't be updated");
     }
@@ -146,5 +159,5 @@ module.exports = {
   handleGetAllProducts,
   handleGetProduct,
   handleDeleteProduct,
-  handleUpdateProduct
+  handleUpdateProduct,
 };

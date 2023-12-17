@@ -140,11 +140,14 @@ const handleUpdateUser = async (req, res, next) => {
     const updateKeys = ["name", "phone", "address"];
     // user is set in req.body from isLoggedIn middleware. it must not include in data
     const { user, ...data } = req.body;
+    if (Object.keys(data).length === 0) {
+      throw createHttpError(400, "Nothing to update");
+    }
     for (let key in data) {
       if (!updateKeys.includes(key)) {
         throw createHttpError(400, `${key} can\'t be updated`);
       }
-      if (data[key] === currentUser[key]) {
+      if (data[key] == currentUser[key]) {
         throw createHttpError(409, `${key} is already updated`);
       }
       updates[key] = data[key];
