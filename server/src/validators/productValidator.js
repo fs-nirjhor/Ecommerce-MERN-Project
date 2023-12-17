@@ -1,10 +1,5 @@
 const { body } = require("express-validator");
-const {
-  defaultUserImagePath,
-  defaultUserImageBuffer,
-  maxImageSize,
-  allowedImageExtensions,
-} = require("../config/config");
+const { defaultProductImagePath } = require("../config/config");
 const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
 const Category = require("../models/categoryModel");
@@ -22,7 +17,7 @@ const validateProduct = [
     .withMessage("Products description is required.")
     .isLength({ min: 10, max: 100 })
     .withMessage("Products description should 10-100 characters."),
-  body("image"), // validated by multer
+  body("image").optional().default(defaultProductImagePath), // validated by multer
   body("price")
     .trim()
     .notEmpty()
@@ -38,11 +33,13 @@ const validateProduct = [
     .withMessage("Products quantity must be positive number.")
     .default(1),
   body("sold")
+    .optional()
     .default(1)
     .trim()
     .isInt({ min: 1 })
     .withMessage("Products sold amount must be positive number."),
   body("shipping")
+    .optional()
     .default(0)
     .trim()
     .isNumeric({ min: 0 })

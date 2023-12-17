@@ -41,6 +41,7 @@ const validateUserRegistration = [
     .isLength({ min: 5 })
     .withMessage("Phone should have at least 5 characters."),
   body("image")
+  .optional()
   .custom((value, { req }) => {
     //! this image filter will not make any effect because the case's are already handled by multer filter.
     const image = req.file;
@@ -90,6 +91,7 @@ const validateUserLogin = [
       "Password must have at least 8 characters and at least 1 uppercase, 1 lowercase, 1 number and 1 special character."
     ),
 ];
+
 const validateUpdatePassword = [
   body("currentPassword")
     .trim()
