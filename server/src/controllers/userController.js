@@ -62,9 +62,7 @@ const handleDeleteUser = async (req, res, next) => {
     const id = req.params.id;
     const filter = { _id: id };
     const options = { password: 0 };
-    const deletedUser = await deleteItem(User, filter, options);
-    // removing saved image of deleted user
-    deleteImage(deletedUser.image, defaultUserImagePath);
+    const deletedUser = await deleteItem(User, filter, defaultUserImagePath, options);
     return successResponse(res, {
       statusCode: 200,
       message: "User deleted successfully",

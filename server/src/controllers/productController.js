@@ -80,8 +80,8 @@ const handleGetProduct = async (req, res, next) => {
 const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const deletedProduct = await deleteItem(Product, { slug });
-    deleteImage(deletedProduct.image, defaultProductImagePath);
+    const filter = { slug };
+    const deletedProduct = await deleteItem(Product, filter, defaultProductImagePath);
     return successResponse(res, {
       statusCode: 200,
       message: `${deletedProduct.name} deleted successfully`,
