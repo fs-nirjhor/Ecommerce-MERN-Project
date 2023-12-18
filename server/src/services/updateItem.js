@@ -85,7 +85,6 @@ const updateManyKey = async (Model, filter, updateKeys, req, defaultImagePath, o
       throw createHttpError(400, "Nothing to update");
     }
     for (let key in data) {
-      console.log(data[key] , currentItem)
       if (!updateKeys.includes(key)) {
         throw createHttpError(400, `${key} can\'t be updated`);
       }
