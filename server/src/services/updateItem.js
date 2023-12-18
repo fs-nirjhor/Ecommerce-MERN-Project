@@ -72,7 +72,7 @@ const updateIsBanned = async (id, action) => {
 };
 const updateManyKey = async (Model, filter, updateKeys, req, defaultImagePath, options={}) => {
   try {
-    const currentItem = await findOneItem(Model, filter, options);
+    const currentItem = await findOneItem(Model, filter);
     const updates = {};
     const image = req.file;
     // user is set in req.body from isLoggedIn middleware. it must not include in data
@@ -85,6 +85,7 @@ const updateManyKey = async (Model, filter, updateKeys, req, defaultImagePath, o
       throw createHttpError(400, "Nothing to update");
     }
     for (let key in data) {
+      console.log(data[key] , currentItem)
       if (!updateKeys.includes(key)) {
         throw createHttpError(400, `${key} can\'t be updated`);
       }

@@ -134,9 +134,9 @@ const handleActivateUserAccount = async (req, res, next) => {
 const handleUpdateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const filter = {_id: id};
     const updateKeys = ["name", "phone", "address", "image"];
-    const options = { password: 0 };
+    const filter = {_id: id};
+    const options = { select: '-password' };
     const updatedUser = await updateManyKey(User, filter, updateKeys, req, defaultUserImagePath, options)
     if (!updatedUser) {
       throw new Error("User can't be updated");

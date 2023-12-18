@@ -8,6 +8,7 @@ const { deleteItem } = require("../services/deleteItem");
 const { findOneItem } = require("../services/findItem");
 const createSlug = require("../helper/createSlug");
 const deleteImage = require("../helper/deleteImage");
+const { updateManyKey } = require("../services/updateItem");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -94,9 +95,6 @@ const handleDeleteProduct = async (req, res, next) => {
 const handleUpdateProduct = async (req, res, next) => {
   try {
     const slug = req.params.slug;
-    const currentProduct = await findOneItem(Product, { slug });
-    const updates = {};
-    const updateOptions = { new: true, runValidators: true, context: "query" };
     const updateKeys = [
       "name",
       "slug", // set by validator
@@ -106,42 +104,14 @@ const handleUpdateProduct = async (req, res, next) => {
       "sold",
       "shipping",
       "category",
+      "image",
     ];
-    const { user, ...data } = req.body; // user is set in req.body from isLoggedIn middleware. it must not include in data
-    if (Object.keys(data).length === 0) {
-      throw createHttpError(400, "Nothing to update");
-    }
-    for (let key in data) {
-      if (!updateKeys.includes(key)) {
-        throw createHttpError(400, `${key} can\'t be updated`);
-      }
-      if (data[key] == currentProduct[key]) {
-        throw createHttpError(409, `${key} is already updated`);
-      }
-      updates[key] = data[key];
-    }
-
-    const image = req.file;
-    if (image) {
-      if (image.size > maxImageSize) {
-        throw new Error(
-          `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
-        );
-      }
-      updates.image = image.path;
-    }
-
-    const updatedProduct = await Product.findOneAndUpdate(
-      { slug },
-      updates,
-      updateOptions
-    )
-      .populate("category")
-      .select("-createdAt -updatedAt -__v");
+    const filter = {slug};
+    const options = { populate: { path: 'category' } };
+    const updatedProduct = await updateManyKey(Product, filter, updateKeys, req, defaultProductImagePath, options);  
     if (!updatedProduct) {
-      throw new Error("Product can't be updated");
-    }
-    image && deleteImage(currentProduct.image, defaultProductImagePath);
+      throw createHttpError("Product can't be updated");
+    }  
     return successResponse(res, {
       statusCode: 200,
       message: "Product updated successfully",
