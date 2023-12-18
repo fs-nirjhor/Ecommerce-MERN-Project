@@ -20,7 +20,7 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const { defaultUserImagePath, maxImageSize } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
-const { updateIsBanned, updateItem, updateItemById } = require("../services/updateItem");
+const { updateIsBanned, updateItem, updateItemById, updateManyKey } = require("../services/updateItem");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
@@ -134,47 +134,13 @@ const handleActivateUserAccount = async (req, res, next) => {
 const handleUpdateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const currentUser = await findItemById(User, id, { password: 0 });
-    const updates = {};
-    const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updateKeys = ["name", "phone", "address"];
-    // user is set in req.body from isLoggedIn middleware. it must not include in data
-    const { user, ...data } = req.body;
-    if (Object.keys(data).length === 0) {
-      throw createHttpError(400, "Nothing to update");
-    }
-    for (let key in data) {
-      if (!updateKeys.includes(key)) {
-        throw createHttpError(400, `${key} can\'t be updated`);
-      }
-      if (data[key] == currentUser[key]) {
-        throw createHttpError(409, `${key} is already updated`);
-      }
-      updates[key] = data[key];
-    }
-    const image = req.file;
-    if (image) {
-      if (image.size > maxImageSize) {
-        throw new Error(
-          `Image size can\'t exceed ${maxImageSize / 1024 / 1024}MB.`
-        );
-      }
-      //updates.image = image.buffer.toString("base64");
-      updates.image = image.path;
-    }
-    const updatedUser = await updateItemById(
-      User,
-      id,
-      updates,
-      updateOptions
-    );
-    delete updatedUser.password;
+    const filter = {_id: id};
+    const updateKeys = ["name", "phone", "address", "image"];
+    const options = { password: 0 };
+    const updatedUser = await updateManyKey(User, filter, updateKeys, req, defaultUserImagePath, options)
     if (!updatedUser) {
       throw new Error("User can't be updated");
     }
-    // delete ex image after update
-    image && deleteImage(currentUser.image, defaultUserImagePath);
-
     return successResponse(res, {
       statusCode: 200,
       message: "User updated successfully",
