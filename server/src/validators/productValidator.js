@@ -12,6 +12,11 @@ const validateProduct = [
     .withMessage("Products name is required.")
     .isLength({ max: 100 })
     .withMessage("Products name should less than 100 characters."),
+    body("slug")
+    .customSanitizer((value, { req }) => {
+      return createSlug(req.body.name);
+    })
+    .isSlug(),
   body("description")
     .trim()
     .notEmpty()
@@ -61,6 +66,7 @@ const validateProduct = [
       return true;
     }),
 ];
+
 const validateUpdateProduct = [
   body("name")
     .optional()
