@@ -99,6 +99,7 @@ const handleUpdateProduct = async (req, res, next) => {
     const updateOptions = { new: true, runValidators: true, context: "query" };
     const updateKeys = [
       "name",
+      "slug", // set by validator
       "description",
       "price",
       "quantity",
@@ -106,6 +107,7 @@ const handleUpdateProduct = async (req, res, next) => {
       "shipping",
       "category",
     ];
+    console.log(req.body)
     const { user, ...data } = req.body; // user is set in req.body from isLoggedIn middleware. it must not include in data
     if (Object.keys(data).length === 0) {
       throw createHttpError(400, "Nothing to update");
@@ -120,9 +122,9 @@ const handleUpdateProduct = async (req, res, next) => {
       updates[key] = data[key];
     }
 
-    if (data.name) {
+    /* if (data.name) {
       updates.slug = createSlug(data.name);
-    }
+    } */
     const image = req.file;
     if (image) {
       if (image.size > maxImageSize) {
