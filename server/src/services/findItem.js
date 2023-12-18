@@ -3,9 +3,9 @@ const createHttpError = require("http-errors");
 const User = require("../models/userModel");
 const { setPagination } = require("../helper/managePagination");
 
-const findItemById = async (Model, id, options = {}) => {
+const findItemById = async (Model, id, select = {}) => {
   try {
-    const item = await Model.findById(id, options).lean();
+    const item = await Model.findById(id, select).lean();
     if (!item) {
       throw createHttpError(404, `No ${Model.modelName} found by this id.`);
     }
@@ -19,14 +19,14 @@ const findItemById = async (Model, id, options = {}) => {
   }
 };
 
-const findOneItem = async (Model, data, options = {}) => {
+const findOneItem = async (Model, data, select = {}) => {
   try {
     if (typeof data !== "object" || Object.keys(data).length === 0) {
       throw new Error(
         `Please provide data as object to find one ${Model.modelName}`
       );
     }
-    const item = await Model.findOne(data, options);
+    const item = await Model.findOne(data, select);
     if (!item) {
       throw createHttpError(
         404,
@@ -50,8 +50,8 @@ const findAllUsers = async (search, limit, page) => {
         { phone: { $regex: searchRegExp } },
       ],
     };
-    const options = { password: 0 }; // not include
-    const users = await User.find(filter, options)
+    const select = { password: 0 }; // not include
+    const users = await User.find(filter, select)
       .limit(limit)
       .skip((page - 1) * limit)
       .select("-createdAt -updatedAt -__v");
