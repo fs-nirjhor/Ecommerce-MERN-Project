@@ -13,6 +13,9 @@ const jwtResetPasswordKey =
 const smtpUser = process.env.SMTP_USER || "";
 const smtpPassword = process.env.SMTP_PASSWORD || "";
 const clientUrl = process.env.CLIENT_URL || "";
+const cloudinaryName = process.env.CLOUDINARY_NAME || "";
+const cloudinaryKey = process.env.CLOUDINARY_KEY || "";
+const cloudinarySecret = process.env.CLOUDINARY_SECRET || "";
 
 module.exports = {
   serverPort,
@@ -24,4 +27,7 @@ module.exports = {
   smtpUser,
   smtpPassword,
   clientUrl,
+  cloudinaryName,
+  cloudinaryKey,
+  cloudinarySecret,
 };
