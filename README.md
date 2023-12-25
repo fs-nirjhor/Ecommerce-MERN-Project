@@ -3,7 +3,7 @@
 ## Packages
 
 ### Backend:
-    express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcryptjs, jsonwebtoken, nodemailer, multer, cookie-parser, winston, slugify
+    express, nodemon, morgan, http-errors, express-xss-sanitizer (alternative for xss-clean), express-rate-limit, dotenv, mongoose, bcryptjs, jsonwebtoken, nodemailer, multer, cookie-parser, winston, slugify, cloudinary
 
 ## Routes
 ### Get:

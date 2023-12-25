@@ -9,10 +9,17 @@ const { findOneItem } = require("../services/findItem");
 const createSlug = require("../helper/createSlug");
 const deleteImage = require("../helper/deleteImage");
 const { updateManyKey } = require("../services/updateItem");
+const cloudinary = require("../config/cloudinaryConfig");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
-    const image = req.file?.path || defaultProductImagePath;
+    const path = req.file?.path || defaultProductImagePath;
+    const cloudImage = await cloudinary.uploader.upload(path, {
+      folder: "ecommerceMern/products",
+      use_filename: true,
+      unique_filename: false,
+    });
+    const image = cloudImage.secure_url;
     const newProduct = { ...req.body, image };
     const product = await createItem(Product, newProduct);
     return successResponse(res, {
@@ -81,7 +88,11 @@ const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const filter = { slug };
-    const deletedProduct = await deleteItem(Product, filter, defaultProductImagePath);
+    const deletedProduct = await deleteItem(
+      Product,
+      filter,
+      defaultProductImagePath
+    );
     return successResponse(res, {
       statusCode: 200,
       message: `${deletedProduct.name} deleted successfully`,
@@ -106,12 +117,19 @@ const handleUpdateProduct = async (req, res, next) => {
       "category",
       "image",
     ];
-    const filter = {slug};
-    const options = { populate: { path: 'category' } };
-    const updatedProduct = await updateManyKey(Product, filter, updateKeys, req, defaultProductImagePath, options);  
+    const filter = { slug };
+    const options = { populate: { path: "category" } };
+    const updatedProduct = await updateManyKey(
+      Product,
+      filter,
+      updateKeys,
+      req,
+      defaultProductImagePath,
+      options
+    );
     if (!updatedProduct) {
       throw createHttpError("Product can't be updated");
-    }  
+    }
     return successResponse(res, {
       statusCode: 200,
       message: "Product updated successfully",

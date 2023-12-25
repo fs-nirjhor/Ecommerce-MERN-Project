@@ -42,17 +42,28 @@ const productStorage = multer.diskStorage({
   },
 });
 
+// "storage" prevent saving file in project directory. its for save file in cloudinary.
+const storage = multer.diskStorage({
+  filename: function (req, file, cb) {
+    const extension = path.extname(file.originalname);
+    const filename = file.originalname.replace(extension, "");
+    cb(null, filename);
+  },
+});
 
 const uploadUserImage = multer({
-  storage: userStorage,
+  //storage: userStorage,
+  storage,
   limits: { fileSize: maxImageSize },
   fileFilter,
 });
 
 const uploadProductImage = multer({
-  storage: productStorage,
+  //storage: productStorage,
+  storage,
   limits: { fileSize: maxImageSize },
   fileFilter,
 });
+
 
 module.exports = {uploadUserImage, uploadProductImage };
