@@ -2,24 +2,16 @@ const { successResponse } = require("./responseController");
 const { createItem } = require("../services/createItem");
 const createHttpError = require("http-errors");
 const Product = require("../models/productModel");
-const { defaultProductImagePath, maxImageSize } = require("../config/config");
+const { defaultProductImagePath } = require("../config/config");
 const { setPagination } = require("../helper/managePagination");
 const { deleteItem } = require("../services/deleteItem");
-const { findOneItem } = require("../services/findItem");
-const createSlug = require("../helper/createSlug");
-const deleteImage = require("../helper/deleteImage");
 const { updateManyKey } = require("../services/updateItem");
-const cloudinary = require("../config/cloudinaryConfig");
+const useCloudinary = require("../helper/useCloudinary");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
     const path = req.file?.path || defaultProductImagePath;
-    const cloudImage = await cloudinary.uploader.upload(path, {
-      folder: "ecommerceMern/products",
-      use_filename: true,
-      unique_filename: false,
-    });
-    const image = cloudImage.secure_url;
+    const image = await useCloudinary(path, "products");
     const newProduct = { ...req.body, image };
     const product = await createItem(Product, newProduct);
     return successResponse(res, {
