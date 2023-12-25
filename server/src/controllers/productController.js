@@ -11,7 +11,7 @@ const useCloudinary = require("../helper/useCloudinary");
 const handleCreateProduct = async (req, res, next) => {
   try {
     const path = req.file?.path || defaultProductImagePath;
-    const image = await useCloudinary(path, "products");
+    const image = await useCloudinary(path, "products"); 
     const newProduct = { ...req.body, image };
     const product = await createItem(Product, newProduct);
     return successResponse(res, {
