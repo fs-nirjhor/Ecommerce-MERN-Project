@@ -20,7 +20,14 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../helper/useNodemailer");
 const { defaultUserImagePath, maxImageSize } = require("../config/config");
 const { deleteItem } = require("../services/deleteItem");
-const { updateIsBanned, updateItem, updateItemById, updateManyKey } = require("../services/updateItem");
+const {
+  updateIsBanned,
+  updateItem,
+  updateItemById,
+  updateManyKey,
+} = require("../services/updateItem");
+const useCloudinary = require("../helper/useCloudinary");
+const { createItem } = require("../services/createItem");
 
 const handleGetAllUsers = async (req, res, next) => {
   try {
@@ -62,7 +69,12 @@ const handleDeleteUser = async (req, res, next) => {
     const id = req.params.id;
     const filter = { _id: id };
     const options = { password: 0 };
-    const deletedUser = await deleteItem(User, filter, defaultUserImagePath, options);
+    const deletedUser = await deleteItem(
+      User,
+      filter,
+      defaultUserImagePath,
+      options
+    );
     return successResponse(res, {
       statusCode: 200,
       message: "User deleted successfully",
@@ -75,11 +87,13 @@ const handleDeleteUser = async (req, res, next) => {
 
 const handleProcessRegister = async (req, res, next) => {
   try {
-    // TODO: Here is double setup for upload image as String (path) or Buffer. Any one image should be choose here.
-    const image = req.file?.path || defaultUserImagePath;
+    // TODO: upload image as server path or Buffer string or cloudinary path 
     /* const image = req.file
-      ? req.file.buffer.toString("base64")
-      : defaultUserImageBuffer; */
+    ? req.file.buffer.toString("base64")
+    : defaultUserImageBuffer; */ // buffer image set up
+    //const image = req.file?.path || defaultUserImagePath; // server image setup
+    const path = req.file?.path || defaultUserImagePath;
+    const image = await useCloudinary(path, "users");
     const newUser = { ...req.body, image };
     const { name, email } = newUser;
     const isRegistered = await User.exists({ email: email });
@@ -117,7 +131,7 @@ const handleActivateUserAccount = async (req, res, next) => {
     const user = await createItem(User, decoded);
     return successResponse(res, {
       statusCode: 200,
-      message: `User verified successfully`,
+      message: `User activated successfully`,
       payload: { user },
     });
   } catch (error) {
@@ -133,9 +147,17 @@ const handleUpdateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const updateKeys = ["name", "phone", "address", "image"];
-    const filter = {_id: id};
-    const options = { select: '-password' };
-    const updatedUser = await updateManyKey(User, filter, updateKeys, req, "users", defaultUserImagePath, options)
+    const filter = { _id: id };
+    const options = { select: "-password" };
+    const updatedUser = await updateManyKey(
+      User,
+      filter,
+      updateKeys,
+      req,
+      "users",
+      defaultUserImagePath,
+      options
+    );
     if (!updatedUser) {
       throw new Error("User can't be updated");
     }
@@ -164,12 +186,7 @@ const handleUpdatePassword = async (req, res, next) => {
     }
     const updates = { $set: { password: newPassword } };
     const updateOptions = { new: true, runValidators: true, context: "query" };
-    const updatedUser = await updateItemById(
-      User,
-      id,
-      updates,
-      updateOptions
-    );
+    const updatedUser = await updateItemById(User, id, updates, updateOptions);
     if (!updatedUser) throw new Error("Password can't be updated");
     return successResponse(res, {
       statusCode: 200,
@@ -222,7 +239,7 @@ const handleResetPassword = async (req, res, next) => {
       decoded.id,
       updates,
       updateOptions
-    )
+    );
     if (!updatedUser) throw new Error("Password can't be updated");
     return successResponse(res, {
       statusCode: 200,

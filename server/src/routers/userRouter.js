@@ -29,6 +29,7 @@ const userRouter = express.Router();
 
 // api/users
 userRouter.get("/", isLoggedIn, isAdmin, handleGetAllUsers);
+
 // api/users/process-register
 userRouter.post(
   "/process-register",
@@ -38,8 +39,10 @@ userRouter.post(
   runValidations,
   handleProcessRegister
 );
+
 // api/users/activate
 userRouter.post("/activate", isLoggedOut, handleActivateUserAccount);
+
 // api/users/forget-password
 userRouter.post(
   "/forget-password",
