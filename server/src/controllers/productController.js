@@ -116,6 +116,7 @@ const handleUpdateProduct = async (req, res, next) => {
       filter,
       updateKeys,
       req,
+      "products",
       defaultProductImagePath,
       options
     );

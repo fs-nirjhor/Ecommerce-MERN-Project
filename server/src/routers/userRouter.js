@@ -73,7 +73,9 @@ userRouter.put(
 
 // api/users/:id
 userRouter.get("/:id([0-9a-fA-F]{24})", isLoggedIn, handleGetUserById);
+
 userRouter.delete("/:id([0-9a-fA-F]{24})", isLoggedIn, handleDeleteUser);
+
 userRouter.put(
   "/:id([0-9a-fA-F]{24})",
   isLoggedIn,

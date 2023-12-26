@@ -4,6 +4,7 @@ const { findOneItem, findItemById } = require("./findItem");
 const User = require("../models/userModel");
 const { maxImageSize } = require("../config/config");
 const deleteImage = require("../helper/deleteImage");
+const useCloudinary = require("../helper/useCloudinary");
 
 const updateItem = async (Model, filter, updates, options={}) => {
   try {
@@ -70,7 +71,7 @@ const updateIsBanned = async (id, action) => {
     throw error;
   }
 };
-const updateManyKey = async (Model, filter, updateKeys, req, defaultImagePath, options={}) => {
+const updateManyKey = async (Model, filter, updateKeys, req, cloudinaryFolder, defaultImagePath, options={}) => {
   try {
     const currentItem = await findOneItem(Model, filter);
     const updates = {};
@@ -78,8 +79,10 @@ const updateManyKey = async (Model, filter, updateKeys, req, defaultImagePath, o
     // user is set in req.body from isLoggedIn middleware. it must not include in data
     const { user, ...data } = req.body;
     if (image) {
-      //data.image = image.buffer.toString("base64");
-      data.image = image.path;
+      //data.image = image.buffer.toString("base64"); //buffer image setup
+      //data.image = image.path; // server image setup
+    const cloudImage = await useCloudinary(image.path, cloudinaryFolder); 
+    data.image = cloudImage;
     }
     if (Object.keys(data).length === 0) {
       throw createHttpError(400, "Nothing to update");
@@ -103,8 +106,8 @@ const updateManyKey = async (Model, filter, updateKeys, req, defaultImagePath, o
     if (!updatedItem) {
       throw createHttpError(400, "Failed to update");
     }
-    // delete ex image after update
-    image && deleteImage(currentItem.image, defaultImagePath);
+    // delete ex image after update. when store image in server
+    //image && deleteImage(currentItem.image, defaultImagePath);
     return updatedItem;
   } catch (error) {
     // handle mongoose error
