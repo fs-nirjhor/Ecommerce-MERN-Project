@@ -118,7 +118,7 @@ const handleProcessRegister = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}; 
 const handleActivateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
